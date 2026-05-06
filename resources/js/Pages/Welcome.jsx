@@ -1,5 +1,6 @@
 import { Head, Link } from '@inertiajs/react';
 import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const SlideContent = ({ slide, config, isActive, centered }) => (
     <div className={`space-y-4 md:space-y-6 ${centered ? 'flex flex-col items-center text-center' : 'text-left md:text-left'}`}>
@@ -23,31 +24,141 @@ const SlideContent = ({ slide, config, isActive, centered }) => (
     </div>
 );
 
-const Mockup = ({ isActive, image, type = 'emerald' }) => (
-    <div className="relative w-full h-full flex items-center justify-center scale-[0.65] sm:scale-75 lg:scale-90 xl:scale-100">
-        <div className={`absolute inset-0 transition-all duration-[4000ms] ease-out ${isActive ? 'scale-110' : 'scale-100'}`}>
-            <img src={image} className="w-full h-full object-cover opacity-10 grayscale" alt="preview" />
-        </div>
-        
-        <div className={`relative z-10 w-64 md:w-72 h-[400px] md:h-[450px] bg-white rounded-[2.5rem] md:rounded-[3rem] shadow-[0_40px_80px_-15px_rgba(0,0,0,0.15)] border-[6px] md:border-[8px] border-white/50 backdrop-blur-sm overflow-hidden p-5 md:p-6 transition-all duration-1000 delay-500 ${isActive ? 'translate-y-0 opacity-100 scale-100' : 'translate-y-20 opacity-0 scale-95'}`}>
-            <div className="flex justify-between items-center mb-6 md:mb-8">
-                <div className={`w-5 h-5 md:w-6 md:h-6 rounded-lg ${type === 'blue' ? 'bg-blue-500' : 'bg-emerald-500'}`}></div>
-                <div className="flex gap-1">
-                    <div className="w-1 h-1 md:w-1.5 md:h-1.5 bg-slate-100 rounded-full"></div>
-                    <div className="w-1 h-1 md:w-1.5 md:h-1.5 bg-slate-100 rounded-full"></div>
+const AppMockup3D = ({ isActive, type = 'emerald' }) => {
+    return (
+        <div className="relative w-full h-full flex items-center justify-center">
+            {/* Ambient Background Glow */}
+            <motion.div 
+                animate={isActive ? { 
+                    scale: [1, 1.2, 1],
+                    opacity: [0.3, 0.5, 0.3],
+                } : { opacity: 0 }}
+                transition={{ duration: 4, repeat: Infinity }}
+                className={`absolute inset-0 blur-[100px] rounded-full -z-10 ${type === 'blue' ? 'bg-blue-200' : 'bg-emerald-200'}`}
+            />
+
+            <motion.div 
+                initial={{ rotateY: 0, rotateX: 0, y: 50, opacity: 0 }}
+                animate={isActive ? { 
+                    rotateY: -12, 
+                    rotateX: 8, 
+                    y: [0, -10, 0],
+                    opacity: 1
+                } : { rotateY: 0, rotateX: 0, y: 50, opacity: 0 }}
+                transition={isActive ? {
+                    y: { duration: 4, repeat: Infinity, ease: "easeInOut" },
+                    default: { type: "spring", stiffness: 40, damping: 15, mass: 1 }
+                } : { duration: 0.5 }}
+                className="relative z-10 w-full max-w-lg perspective-1000"
+                style={{ transformStyle: 'preserve-3d' }}
+            >
+                {/* Main App Container */}
+                <div className="bg-slate-50 rounded-[2.5rem] p-3 md:p-4 shadow-2xl border-4 border-white overflow-hidden flex gap-3 h-[250px] md:h-[350px]">
+                    {/* Sidebar Skeleton */}
+                    <motion.div 
+                        initial={{ x: -20, opacity: 0 }}
+                        animate={isActive ? { x: 0, opacity: 1 } : {}}
+                        transition={{ delay: 0.5, duration: 0.8 }}
+                        className="w-10 md:w-16 bg-white rounded-3xl p-3 flex flex-col items-center gap-4 shadow-sm"
+                    >
+                        <div className="w-6 h-6 md:w-8 md:h-8 bg-slate-100 rounded-xl"></div>
+                        <div className="flex-1 space-y-3">
+                            {[1, 2, 3].map(i => (
+                                <div key={i} className="w-5 h-5 md:w-6 md:h-6 bg-slate-50 rounded-lg"></div>
+                            ))}
+                        </div>
+                        <div className="w-6 h-6 md:w-8 md:h-8 bg-slate-100 rounded-full"></div>
+                    </motion.div>
+
+                    {/* Main Content Area */}
+                    <div className="flex-1 flex flex-col gap-3">
+                        {/* Mastery HUD Skeleton */}
+                        <motion.div 
+                            initial={{ y: -20, opacity: 0 }}
+                            animate={isActive ? { y: 0, opacity: 1 } : {}}
+                            transition={{ delay: 0.7, duration: 0.8 }}
+                            className="h-10 md:h-14 bg-white rounded-3xl px-4 flex items-center justify-end gap-3 shadow-sm"
+                        >
+                            <div className="h-2 w-16 md:w-24 bg-slate-100 rounded-full"></div>
+                            <div className={`w-6 h-6 md:w-8 md:h-8 rounded-lg ${type === 'blue' ? 'bg-blue-500/20' : 'bg-emerald-500/20'}`}></div>
+                        </motion.div>
+
+                        {/* Dashboard Grid */}
+                        <div className="flex-1 grid grid-cols-2 gap-3">
+                            <motion.div 
+                                initial={{ scale: 0.9, opacity: 0 }}
+                                animate={isActive ? { scale: 1, opacity: 1 } : {}}
+                                transition={{ delay: 0.9, duration: 0.8 }}
+                                className={`rounded-[2rem] p-5 space-y-3 border flex flex-col items-center justify-center ${type === 'blue' ? 'bg-blue-50/50 border-blue-100/50' : 'bg-emerald-50/50 border-emerald-100/50'}`}
+                            >
+                                <div className="h-2 w-12 bg-slate-200 rounded-full mb-2"></div>
+                                <div className={`w-12 h-12 md:w-16 md:h-16 rounded-2xl shadow-xl flex items-center justify-center ${type === 'blue' ? 'bg-blue-500' : 'bg-emerald-500'}`}>
+                                    <div className="w-6 h-6 border-2 border-white/50 rounded-lg"></div>
+                                </div>
+                            </motion.div>
+                            <motion.div 
+                                initial={{ scale: 0.9, opacity: 0 }}
+                                animate={isActive ? { scale: 1, opacity: 1 } : {}}
+                                transition={{ delay: 1.1, duration: 0.8 }}
+                                className="bg-white rounded-[2rem] p-5 space-y-3 border border-slate-100 shadow-sm"
+                            >
+                                <div className="h-2 w-full bg-slate-100 rounded-full"></div>
+                                <div className="h-2 w-2/3 bg-slate-50 rounded-full"></div>
+                                <div className="flex gap-2 pt-2">
+                                    {[1, 2, 3].map(i => (
+                                        <div key={i} className="w-4 h-4 bg-slate-50 rounded-full"></div>
+                                    ))}
+                                </div>
+                            </motion.div>
+                        </div>
+
+                        {/* Vision Hub Card Mock */}
+                        <motion.div 
+                            initial={{ y: 20, opacity: 0 }}
+                            animate={isActive ? { y: 0, opacity: 1 } : {}}
+                            transition={{ delay: 1.3, duration: 0.8 }}
+                            className="h-24 md:h-32 bg-white border-2 border-slate-50 rounded-[2rem] p-4 flex items-center gap-4 shadow-xl shadow-slate-100/50"
+                        >
+                            <div className="w-12 h-12 md:w-16 md:h-16 bg-slate-900 rounded-[1.2rem] flex items-center justify-center flex-shrink-0">
+                                <div className="w-5 h-5 md:w-6 md:h-6 border-4 border-white/20 rounded-full"></div>
+                            </div>
+                            <div className="flex-1 space-y-3 min-w-0">
+                                <div className="h-3 w-3/4 bg-slate-900 rounded-full"></div>
+                                <div className="space-y-2">
+                                    <div className="h-2 w-full bg-slate-50 rounded-full overflow-hidden">
+                                        <motion.div 
+                                            className={`h-full ${type === 'blue' ? 'bg-blue-500' : 'bg-emerald-500'}`}
+                                            animate={isActive ? { width: '65%' } : { width: '0%' }}
+                                            transition={{ delay: 2, duration: 2.5 }}
+                                        />
+                                    </div>
+                                    <div className="h-1.5 w-1/4 bg-slate-100 rounded-full"></div>
+                                </div>
+                            </div>
+                        </motion.div>
+                    </div>
                 </div>
-            </div>
-            <div className="space-y-3 md:space-y-4">
-                <div className="h-20 md:h-24 bg-slate-50 rounded-[1rem] md:rounded-[1.2rem]"></div>
-                <div className="grid grid-cols-2 gap-2 md:gap-2.5">
-                    <div className="h-20 md:h-24 bg-slate-50 rounded-[1rem] md:rounded-[1.2rem]"></div>
-                    <div className={`h-20 md:h-24 rounded-[1rem] md:rounded-[1.2rem] ${type === 'blue' ? 'bg-blue-50' : 'bg-emerald-50'}`}></div>
-                </div>
-                <div className="h-12 md:h-16 bg-slate-50 rounded-[1rem] md:rounded-[1.2rem]"></div>
-            </div>
+
+                {/* Floating Decoration */}
+                <motion.div 
+                    animate={isActive ? { y: [0, -15, 0], rotate: [0, 5, 0] } : {}}
+                    transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+                    className={`absolute -top-6 -right-6 w-20 h-20 md:w-24 md:h-24 rounded-[1.5rem] md:rounded-[2rem] shadow-2xl flex items-center justify-center ${type === 'blue' ? 'bg-blue-500 shadow-blue-200' : 'bg-emerald-500 shadow-emerald-200'}`}
+                >
+                    <div className="w-8 h-8 md:w-10 md:h-10 bg-white/20 rounded-full blur-sm"></div>
+                    <div className="absolute w-5 h-5 md:w-6 md:h-6 bg-white/80 rounded-lg rotate-45"></div>
+                </motion.div>
+            </motion.div>
+
+            {/* Floor Reflection */}
+            <motion.div 
+                initial={{ opacity: 0, scale: 0.5 }}
+                animate={isActive ? { opacity: 0.1, scale: 1.1 } : { opacity: 0, scale: 0.5 }}
+                className={`absolute bottom-[-10%] w-[120%] h-24 blur-3xl rounded-full -z-20 ${type === 'blue' ? 'bg-blue-400' : 'bg-emerald-400'}`}
+            />
         </div>
-    </div>
-);
+    );
+};
 
 export default function Welcome({ auth }) {
     const [currentSlide, setCurrentSlide] = useState(0);
@@ -69,7 +180,7 @@ export default function Welcome({ auth }) {
             motto: "Visual Clarity",
             description: "Break down your grand ambitions into bite-sized, actionable goals using our signature bento-grid interface.",
             icon: "🍱",
-            color: "text-blue-500",
+            color: "text-emerald-500",
             image: "https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?auto=format&fit=crop&q=80&w=1000"
         },
         {
@@ -77,7 +188,7 @@ export default function Welcome({ auth }) {
             motto: "Deep Work Only",
             description: "Minimalist by design, powerful by function. Landas removes the clutter so you can focus on what truly moves the needle.",
             icon: "⚡",
-            color: "text-purple-500",
+            color: "text-emerald-500",
             image: "https://images.unsplash.com/photo-1506784919141-91001e400192?auto=format&fit=crop&q=80&w=1000"
         },
         {
@@ -189,14 +300,14 @@ export default function Welcome({ auth }) {
                             },
                             { 
                                 layout: "reverse", // 40/60 Reverse
-                                heading: "text-blue-900", accent: "text-blue-500", 
+                                heading: "text-slate-900", accent: "text-emerald-500", 
                                 font: "font-black tracking-tight leading-[0.9]",
                                 image: "https://images.unsplash.com/photo-1497032628192-86f99bcd76bc?auto=format&fit=crop&q=80&w=2000"
                             },
                             { 
                                 layout: "center", // Focused Centered
-                                heading: "text-indigo-950", accent: "text-purple-500", 
-                                font: "font-extrabold italic tracking-tighter leading-none",
+                                heading: "text-slate-900", accent: "text-emerald-500", 
+                                font: "font-extrabold tracking-tighter leading-none",
                                 image: "https://images.unsplash.com/photo-1557683316-973673baf926?auto=format&fit=crop&q=80&w=2000"
                             },
                             { 
@@ -222,28 +333,44 @@ export default function Welcome({ auth }) {
                                         <div className="w-full md:w-[60%] flex flex-col justify-center p-8 pt-28 md:p-16 lg:p-24 xl:p-32">
                                             <SlideContent slide={slide} config={config} isActive={isActive} />
                                         </div>
-                                        <div className="w-full md:w-[40%] bg-slate-50 flex items-center justify-center p-8 md:p-12 lg:p-20 overflow-hidden relative min-h-[300px] md:min-h-0">
-                                            <Mockup isActive={isActive} image={config.image} />
+                                        <div className="w-full md:w-[40%] flex items-center justify-center p-8 md:p-12 lg:p-20 relative min-h-[450px] md:min-h-0 select-none">
+                                            {index === 0 ? (
+                                                <motion.div 
+                                                    initial={{ opacity: 0, y: 100, scale: 1.1, rotate: -5 }}
+                                                    animate={isActive ? { opacity: 1, y: 0, scale: 1.4, rotate: 0 } : {}}
+                                                    transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
+                                                    className="relative z-20 w-full max-w-2xl md:-ml-12 lg:-ml-24 pointer-events-none"
+                                                >
+                                                    {/* Floating Dynamic Shadow (Grounding) */}
+                                                    <div className="absolute bottom-[-5%] left-1/2 -translate-x-1/2 w-2/3 h-12 bg-emerald-900/5 blur-3xl rounded-full"></div>
+                                                    
+                                                    <img 
+                                                        src="/images/welcome-doodle-transparent.png" 
+                                                        draggable="false"
+                                                        className="w-full h-auto mix-blend-multiply drop-shadow-[0_20px_40px_rgba(16,185,129,0.08)] select-none pointer-events-none" 
+                                                        alt="Welcome Character" 
+                                                    />
+                                                </motion.div>
+                                            ) : (
+                                                <AppMockup3D isActive={isActive} />
+                                            )}
                                         </div>
                                     </div>
                                 )}
 
                                 {config.layout === 'reverse' && (
-                                    <div className="w-full h-full flex flex-col md:flex-row-reverse bg-slate-50 overflow-y-auto md:overflow-hidden">
+                                    <div className="w-full h-full flex flex-col md:flex-row-reverse bg-white overflow-y-auto md:overflow-hidden">
                                         <div className="w-full md:w-[60%] flex flex-col justify-center p-8 pt-28 md:p-16 lg:p-24 xl:p-32">
                                             <SlideContent slide={slide} config={config} isActive={isActive} />
                                         </div>
-                                        <div className="w-full md:w-[40%] bg-white flex items-center justify-center p-8 md:p-12 lg:p-20 overflow-hidden relative min-h-[300px] md:min-h-0">
-                                            <Mockup isActive={isActive} image={config.image} type="blue" />
+                                        <div className="w-full md:w-[40%] flex items-center justify-center p-8 md:p-12 lg:p-20 overflow-hidden relative min-h-[300px] md:min-h-0">
+                                            <AppMockup3D isActive={isActive} type="emerald" />
                                         </div>
                                     </div>
                                 )}
 
                                 {config.layout === 'center' && (
-                                    <div className="w-full h-full flex items-center justify-center bg-indigo-50/20 p-8 pt-28 md:p-16 lg:p-32 relative overflow-hidden">
-                                        <div className="absolute inset-0 z-0 opacity-10">
-                                            <img src={config.image} className="w-full h-full object-cover grayscale" alt="bg" />
-                                        </div>
+                                    <div className="w-full h-full flex items-center justify-center bg-white p-8 pt-28 md:p-16 lg:p-32 relative overflow-hidden">
                                         <div className="max-w-5xl text-center relative z-10 px-6 md:px-12">
                                             <SlideContent slide={slide} config={config} isActive={isActive} centered />
                                         </div>
@@ -252,7 +379,7 @@ export default function Welcome({ auth }) {
 
                                 {config.layout === 'bento' && (
                                     <div className="w-full h-full flex flex-col md:flex-row bg-slate-900 overflow-y-auto md:overflow-hidden">
-                                        <div className="w-full md:w-[50%] flex flex-col justify-center p-8 pt-28 md:p-16 lg:p-24 xl:p-32 border-b md:border-b-0 md:border-r border-white/5">
+                                        <div className="w-full md:w-[50%] flex flex-col justify-center p-8 pt-28 md:p-16 lg:p-24 xl:p-32">
                                             <SlideContent slide={slide} config={config} isActive={isActive} />
                                         </div>
                                         <div className="w-full md:w-[50%] flex flex-col items-center justify-center p-12 md:p-16 lg:p-24 xl:p-32 relative min-h-[400px] md:min-h-0">
@@ -295,10 +422,10 @@ export default function Welcome({ auth }) {
                     <button 
                         onClick={prevSlide}
                         disabled={currentSlide === 0}
-                        className={`w-14 h-14 md:w-20 md:h-20 rounded-full flex items-center justify-center transition-all duration-500 ${
+                        className={`w-14 h-14 md:w-20 md:h-20 rounded-full flex items-center justify-center transition-all duration-300 ${
                             currentSlide === 0 ? 'opacity-0 scale-50 pointer-events-none' : 
-                            currentSlide === 3 ? 'bg-white/10 text-white border-2 border-white/20 backdrop-blur-xl hover:bg-white/20' :
-                            'bg-white text-slate-800 shadow-xl border-2 border-slate-50 hover:bg-slate-50 active:scale-90'
+                            currentSlide === 3 ? 'bg-transparent text-white/30 border-2 border-transparent hover:bg-white/10 hover:text-white hover:border-white/20 hover:backdrop-blur-xl' :
+                            'bg-transparent text-slate-300 border-2 border-transparent hover:bg-white hover:text-slate-800 hover:shadow-2xl hover:border-slate-50 active:scale-90'
                         }`}
                     >
                         <svg className="w-6 h-6 md:w-8 md:h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -311,10 +438,10 @@ export default function Welcome({ auth }) {
                     <button 
                         onClick={nextSlide}
                         disabled={currentSlide === slides.length - 1}
-                        className={`w-14 h-14 md:w-20 md:h-20 rounded-full flex items-center justify-center transition-all duration-500 ${
+                        className={`w-14 h-14 md:w-20 md:h-20 rounded-full flex items-center justify-center transition-all duration-300 ${
                             currentSlide === slides.length - 1 ? 'opacity-0 scale-50 pointer-events-none' : 
-                            currentSlide === 3 ? 'bg-white/10 text-white border-2 border-white/20 backdrop-blur-xl hover:bg-white/20' :
-                            'bg-white text-slate-800 shadow-xl border-2 border-slate-50 hover:bg-slate-50 active:scale-90'
+                            currentSlide === 3 ? 'bg-transparent text-white/30 border-2 border-transparent hover:bg-white/10 hover:text-white hover:border-white/20 hover:backdrop-blur-xl' :
+                            'bg-transparent text-slate-300 border-2 border-transparent hover:bg-white hover:text-slate-800 hover:shadow-2xl hover:border-slate-50 active:scale-90'
                         }`}
                     >
                         <svg className="w-6 h-6 md:w-8 md:h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
