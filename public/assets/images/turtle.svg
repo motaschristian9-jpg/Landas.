@@ -1,0 +1,27 @@
+<svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Body/Shell -->
+  <path d="M50 20C30 20 15 35 15 55C15 75 30 90 50 90C70 90 85 75 85 55C85 35 70 20 50 20Z" fill="#8B4513"/>
+  <path d="M50 25C35 25 22 37 22 55C22 73 35 85 50 85C65 85 78 73 78 55C78 37 65 25 50 25Z" fill="#A0522D"/>
+  
+  <!-- Shell Pattern -->
+  <path d="M50 35L60 45H40L50 35Z" fill="#8B4513" opacity="0.3"/>
+  <path d="M35 55L45 65H25L35 55Z" fill="#8B4513" opacity="0.3"/>
+  <path d="M65 55L75 65H55L65 55Z" fill="#8B4513" opacity="0.3"/>
+  
+  <!-- Head -->
+  <circle cx="50" cy="35" r="15" fill="#6B8E23"/>
+  
+  <!-- Cap -->
+  <path d="M35 30C35 22 42 15 50 15C58 15 65 22 65 30H35Z" fill="#228B22"/>
+  <rect x="30" y="30" width="40" height="5" rx="2" fill="#228B22"/>
+  <!-- Star on Cap -->
+  <path d="M50 18L52 22H48L50 18Z" fill="white"/>
+  
+  <!-- Eyes -->
+  <circle cx="45" cy="35" r="2" fill="black"/>
+  <circle cx="55" cy="35" r="2" fill="black"/>
+  
+  <!-- Legs -->
+  <path d="M25 80L20 90H30L25 80Z" fill="#6B8E23"/>
+  <path d="M75 80L70 90H80L75 80Z" fill="#6B8E23"/>
+</svg>
