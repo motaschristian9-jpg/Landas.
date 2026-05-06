@@ -1,5 +1,10 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\GoalController;
+use App\Http\Controllers\TodoController;
+use App\Http\Controllers\HabitController;
+use App\Http\Controllers\MasteryController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -14,50 +19,25 @@ Route::get('/', function () {
     ]);
 });
 
-Route::get('/dashboard', function () {
-    $user = auth()->user();
-    
-    $totalGoals = \App\Models\Goal::where('user_id', $user->id)->count();
-    $completedGoals = \App\Models\Goal::where('user_id', $user->id)->where('status', 'completed')->count();
-    $inProgressGoals = \App\Models\Goal::where('user_id', $user->id)->where('status', 'in_progress')->count();
-    
-    $upcomingGoals = \App\Models\Goal::where('user_id', $user->id)
-        ->where('status', '!=', 'completed')
-        ->whereNotNull('target_date')
-        ->orderBy('target_date', 'asc')
-        ->with(['category', 'priority'])
-        ->limit(3)
-        ->get();
-        
-    $todayTodos = \App\Models\Todo::where('user_id', $user->id)
-        ->whereDate('due_date', \Carbon\Carbon::today())
-        ->get();
-
-    // Mock activity data for the chart (last 7 days)
-    $activityData = collect(range(0, 6))->map(function($days) {
-        return [
-            'day' => \Carbon\Carbon::today()->subDays(6 - $days)->format('D'),
-            'count' => rand(2, 10) // In a real app, this would be based on completed tasks
-        ];
-    });
-
-    return Inertia::render('Dashboard', [
-        'totalGoals' => $totalGoals,
-        'completedGoals' => $completedGoals,
-        'inProgressGoals' => $inProgressGoals,
-        'upcomingGoals' => $upcomingGoals,
-        'todayTodos' => $todayTodos,
-        'activityData' => $activityData,
-    ]);
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
 
 Route::middleware('auth')->group(function () {
-    Route::resource('goals', \App\Http\Controllers\GoalController::class);
-    Route::resource('todos', \App\Http\Controllers\TodoController::class);
+    Route::resource('goals', GoalController::class);
+    Route::post('/goals/{goal}/milestones', [GoalController::class, 'addMilestone'])->name('goals.milestones.store');
+    Route::patch('/goals/{goal}/milestones/{milestone}', [GoalController::class, 'toggleMilestone'])->name('goals.milestones.toggle');
+    Route::delete('/goals/{goal}/milestones/{milestone}', [GoalController::class, 'deleteMilestone'])->name('goals.milestones.destroy');
+    Route::resource('todos', TodoController::class);
+    Route::resource('habits', HabitController::class);
+    Route::post('/habits/{habit}/log', [HabitController::class, 'log'])->name('habits.log');
+    Route::post('/habits/{habit}/recover', [HabitController::class, 'recover'])->name('habits.recover');
     
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::get('/mastery', [MasteryController::class, 'index'])->name('mastery.index');
 });
 
 require __DIR__.'/auth.php';
+

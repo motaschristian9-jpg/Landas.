@@ -1,11 +1,18 @@
 import { useState, useEffect } from 'react';
 import { Link, usePage, router } from '@inertiajs/react';
+import CommandPalette from '@/Components/CommandPalette';
+import { LayoutDashboard, ListTodo, Flame, Trophy, User, LogOut, Settings } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function AuthenticatedLayout({ children }) {
     const { auth, flash, errors } = usePage().props;
-    const [sidebarCollapsed, setSidebarCollapsed] = useState(
-        localStorage.getItem('sidebarCollapsed') !== 'false'
-    );
+    const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
+        if (typeof window !== 'undefined') {
+            const saved = localStorage.getItem('sidebarCollapsed');
+            return saved !== null ? saved === 'true' : true;
+        }
+        return true;
+    });
     const [userMenu, setUserMenu] = useState(false);
     const [mobileMenu, setMobileMenu] = useState(false);
     
@@ -61,7 +68,8 @@ export default function AuthenticatedLayout({ children }) {
     };
 
     return (
-        <div className="flex min-h-screen mesh-gradient text-slate-900 antialiased selection:bg-emerald-100 selection:text-emerald-900">
+        <div className="flex flex-col md:flex-row min-h-screen mesh-gradient text-slate-900 antialiased selection:bg-emerald-100 selection:text-emerald-900">
+            <CommandPalette />
             {/* Toast Notification */}
             {toast.show && (
                 <div className="fixed top-12 left-1/2 -translate-x-1/2 z-[200] w-full max-w-sm px-6 transition-all duration-500 transform">
@@ -92,60 +100,72 @@ export default function AuthenticatedLayout({ children }) {
 
             {/* Sidebar */}
             <aside 
-                className={`hidden md:flex flex-col bg-white/40 backdrop-blur-xl border-r border-white sticky top-0 h-screen transition-all duration-500 ease-in-out z-50 group ${sidebarCollapsed ? 'w-24' : 'w-72'}`}
+                className={`hidden md:flex flex-col bg-white/40 backdrop-blur-xl border-r border-white sticky top-0 h-screen transition-all duration-500 ease-in-out z-50 group hide-scrollbar ${sidebarCollapsed ? 'w-24' : 'w-72'}`}
             >
-                <div className={`p-6 mb-4 flex items-center overflow-hidden ${sidebarCollapsed ? 'justify-center' : 'justify-between'}`}>
-                    <Link href={route('dashboard')} className="flex items-center space-x-3 group/logo">
-                        <div className="w-12 h-12 bg-emerald-500 rounded-2xl flex items-center justify-center shadow-lg shadow-emerald-200/50 group-hover/logo:rotate-12 transition-transform duration-500 shrink-0">
-                            <div className="w-6 h-6 bg-white rounded-lg"></div>
-                        </div>
-                        {!sidebarCollapsed && (
-                            <span className="text-2xl font-black text-slate-800 tracking-tight whitespace-nowrap transition-all duration-300">
+                {/* Logo Section */}
+                <div className="h-24 flex items-center border-b border-white/50 relative overflow-hidden">
+                    <div className={`flex items-center transition-all duration-500 w-full ${sidebarCollapsed ? 'px-0 justify-center' : 'px-6'}`}>
+                        <Link href={route('dashboard')} className="flex items-center group/logo shrink-0">
+                            <div className="w-12 h-12 bg-emerald-500 rounded-2xl flex items-center justify-center shadow-lg shadow-emerald-200/50 group-hover/logo:rotate-12 transition-transform duration-500 shrink-0">
+                                <div className="w-6 h-6 bg-white rounded-lg"></div>
+                            </div>
+                            <span className={`text-2xl font-black text-slate-800 tracking-tight whitespace-nowrap transition-all duration-500 overflow-hidden ${sidebarCollapsed ? 'opacity-0 max-w-0 ml-0 pointer-events-none' : 'opacity-100 max-w-xs ml-3'}`}>
                                 Landas<span className="text-emerald-500">.</span>
                             </span>
-                        )}
-                    </Link>
-                </div>
-
-                <nav className="flex-1 px-4 space-y-2 overflow-y-auto">
-                    <div className="mb-4">
-                        {!sidebarCollapsed && <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-4 mb-4">Main Menu</p>}
-                        
-                        <Link href={route('dashboard')} 
-                           className={`flex items-center p-3 rounded-2xl transition-all group/item ${route().current('dashboard') ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-100' : 'text-slate-500 hover:bg-emerald-50 hover:text-emerald-700'} ${sidebarCollapsed ? 'justify-center' : ''}`}>
-                            <div className="shrink-0 transition-transform group-hover/item:scale-110">
-                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
-                            </div>
-                            {!sidebarCollapsed && <span className="ml-4 font-black text-sm uppercase tracking-widest whitespace-nowrap">Dashboard</span>}
-                        </Link>
-
-                        <Link href={route('goals.index')} 
-                           className={`flex items-center p-3 rounded-2xl transition-all group/item mt-2 ${route().current('goals.*') ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-100' : 'text-slate-500 hover:bg-emerald-50 hover:text-emerald-700'} ${sidebarCollapsed ? 'justify-center' : ''}`}>
-                            <div className="shrink-0 transition-transform group-hover/item:scale-110">
-                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                            </div>
-                            {!sidebarCollapsed && <span className="ml-4 font-black text-sm uppercase tracking-widest whitespace-nowrap">My Goals</span>}
-                        </Link>
-
-                        {/* Note: todos route might need adjustment based on availability */}
-                        <Link href={route('todos.index')} 
-                           className={`flex items-center p-3 rounded-2xl transition-all group/item mt-2 ${route().current('todos.*') ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-100' : 'text-slate-500 hover:bg-emerald-50 hover:text-emerald-700'} ${sidebarCollapsed ? 'justify-center' : ''}`}>
-                            <div className="shrink-0 transition-transform group-hover/item:scale-110">
-                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
-                            </div>
-                            {!sidebarCollapsed && <span className="ml-4 font-black text-sm uppercase tracking-widest whitespace-nowrap">Daily Tasks</span>}
                         </Link>
                     </div>
+                </div>
+
+                <nav className="flex-1 px-4 space-y-2 overflow-y-auto hide-scrollbar pt-4">
+                    <p className={`text-[9px] font-black text-slate-300 uppercase tracking-[0.3em] px-4 whitespace-nowrap transition-all duration-500 overflow-hidden ${sidebarCollapsed ? 'opacity-0 max-w-0 mb-0 h-0' : 'opacity-100 max-w-xs mb-4 h-auto'}`}>
+                        Main Menu
+                    </p>
+                    
+                    {/* Dashboard */}
+                    <Link href={route('dashboard')} 
+                        className={`flex items-center h-14 rounded-2xl transition-all duration-500 group/item relative overflow-hidden ${route().current('dashboard') ? 'bg-emerald-500 text-white shadow-xl shadow-emerald-200/50' : 'text-slate-500 hover:bg-emerald-50 hover:text-emerald-700'}`}>
+                        <div className="w-16 h-14 shrink-0 flex items-center justify-center transition-transform duration-500 group-hover/item:scale-110">
+                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                        </div>
+                        <span className={`font-black text-[10px] uppercase tracking-[0.2em] whitespace-nowrap transition-all duration-500 overflow-hidden ${sidebarCollapsed ? 'opacity-0 max-w-0' : 'opacity-100 max-w-xs ml-0'}`}>Dashboard</span>
+                    </Link>
+
+                    {/* Execution */}
+                    <Link href={route('todos.index')} 
+                        className={`flex items-center h-14 rounded-2xl transition-all duration-500 group/item relative overflow-hidden ${route().current('todos.*') ? 'bg-emerald-500 text-white shadow-xl shadow-emerald-200/50' : 'text-slate-500 hover:bg-emerald-50 hover:text-emerald-700'}`}>
+                        <div className="w-16 h-14 shrink-0 flex items-center justify-center transition-transform duration-500 group-hover/item:scale-110">
+                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+                        </div>
+                        <span className={`font-black text-[10px] uppercase tracking-[0.2em] whitespace-nowrap transition-all duration-500 overflow-hidden ${sidebarCollapsed ? 'opacity-0 max-w-0' : 'opacity-100 max-w-xs ml-0'}`}>Daily Sprint</span>
+                    </Link>
+
+                    {/* Discipline */}
+                    <Link href={route('habits.index')} 
+                        className={`flex items-center h-14 rounded-2xl transition-all duration-500 group/item relative overflow-hidden ${route().current('habits.*') ? 'bg-emerald-500 text-white shadow-xl shadow-emerald-200/50' : 'text-slate-500 hover:bg-emerald-50 hover:text-emerald-700'}`}>
+                        <div className="w-16 h-14 shrink-0 flex items-center justify-center transition-transform duration-500 group-hover/item:scale-110">
+                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.99 7.99 0 0120 13a7.98 7.98 0 01-2.343 5.657z"></path></svg>
+                        </div>
+                        <span className={`font-black text-[10px] uppercase tracking-[0.2em] whitespace-nowrap transition-all duration-500 overflow-hidden ${sidebarCollapsed ? 'opacity-0 max-w-0' : 'opacity-100 max-w-xs ml-0'}`}>Daily Discipline</span>
+                    </Link>
+
+                    {/* Vision */}
+                    <Link href={route('mastery.index')} 
+                        className={`flex items-center h-14 rounded-2xl transition-all duration-500 group/item relative overflow-hidden ${route().current('mastery.*') ? 'bg-emerald-500 text-white shadow-xl shadow-emerald-200/50' : 'text-slate-500 hover:bg-emerald-50 hover:text-emerald-700'}`}>
+                        <div className="w-16 h-14 shrink-0 flex items-center justify-center transition-transform duration-500 group-hover/item:scale-110">
+                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                        </div>
+                        <span className={`font-black text-[10px] uppercase tracking-[0.2em] whitespace-nowrap transition-all duration-500 overflow-hidden ${sidebarCollapsed ? 'opacity-0 max-w-0' : 'opacity-100 max-w-xs ml-0'}`}>Vision Hub</span>
+                    </Link>
                 </nav>
 
                 <div className="p-4 border-t border-white/50">
                     <div className="relative">
                         <button onClick={() => setUserMenu(!userMenu)} 
-                                className={`flex items-center w-full p-2 bg-slate-50 rounded-2xl text-slate-700 hover:bg-emerald-50 transition-all focus:outline-none group/user ${sidebarCollapsed ? 'justify-center pr-2' : 'pr-5'}`}>
+                                className={`flex items-center w-full h-14 p-2 bg-slate-50 rounded-2xl text-slate-700 hover:bg-emerald-50 transition-all duration-500 focus:outline-none group/user overflow-hidden ${sidebarCollapsed ? 'justify-center' : 'px-2'}`}>
                             <div className="w-10 h-10 rounded-xl bg-emerald-500 flex items-center justify-center text-white font-black shadow-lg shadow-emerald-100 group-hover/user:scale-105 transition-transform shrink-0">
                                 {auth.user.name.charAt(0)}
                             </div>
-                            {!sidebarCollapsed && <span className="ml-4 font-bold text-sm text-slate-600 truncate">{auth.user.name}</span>}
+                            <span className={`font-bold text-sm text-slate-600 truncate transition-all duration-500 overflow-hidden ${sidebarCollapsed ? 'opacity-0 max-w-0 ml-0 pointer-events-none' : 'opacity-100 max-w-xs ml-4'}`}>{auth.user.name}</span>
                         </button>
                         
                         {userMenu && (
@@ -184,7 +204,7 @@ export default function AuthenticatedLayout({ children }) {
                 </div>
             </aside>
 
-            {/* Mobile Nav */}
+            {/* Mobile Top Header */}
             <nav className="md:hidden bg-white/40 backdrop-blur-xl border-b border-white py-4 px-6 flex justify-between items-center sticky top-0 z-[60] w-full">
                 <Link href={route('dashboard')} className="flex items-center space-x-3">
                     <div className="w-10 h-10 bg-emerald-500 rounded-2xl flex items-center justify-center shadow-lg shadow-emerald-100">
@@ -192,32 +212,116 @@ export default function AuthenticatedLayout({ children }) {
                     </div>
                     <span className="text-xl font-black text-slate-800 tracking-tight">Landas<span className="text-emerald-500">.</span></span>
                 </Link>
-                <button onClick={() => setMobileMenu(!mobileMenu)} className="text-slate-600">
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                
+                <button 
+                    onClick={() => setUserMenu(!userMenu)}
+                    className="w-10 h-10 rounded-xl bg-emerald-500 flex items-center justify-center text-white font-black shadow-lg shadow-emerald-100 active:scale-90 transition-transform"
+                >
+                    {auth.user.name.charAt(0)}
                 </button>
 
-                {mobileMenu && (
-                    <div className="absolute top-full left-0 right-0 bg-white border-b border-slate-100 p-6 space-y-4 shadow-2xl z-[70] animate-in slide-in-from-top">
-                        <Link href={route('dashboard')} className="block text-slate-600 font-bold hover:text-emerald-600 transition-colors">Dashboard</Link>
-                        <Link href={route('goals.index')} className="block text-slate-600 font-bold hover:text-emerald-600 transition-colors">My Goals</Link>
-                        <Link href={route('todos.index')} className="block text-slate-600 font-bold hover:text-emerald-600 transition-colors">Daily Tasks</Link>
-                        <hr className="border-slate-100" />
-                        <Link href={route('profile.edit')} className="block text-slate-600 font-bold">Profile</Link>
-                        <button 
-                            onClick={() => showConfirm({
-                                title: 'Sign Out?',
-                                message: 'Ready to leave?',
-                                confirmText: 'Sign Out',
-                                type: 'warning',
-                                action: () => router.post(route('logout'))
-                            })}
-                            className="block w-full text-left text-red-600 font-bold">Sign Out</button>
-                    </div>
-                )}
+                <AnimatePresence mode="wait">
+                    {userMenu && (
+                        <div key="mobile-user-menu-wrapper" className="md:hidden">
+                            <motion.div 
+                                key="user-menu-overlay"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                onClick={() => setUserMenu(false)}
+                                className="fixed inset-0 bg-slate-900/20 backdrop-blur-sm z-[70]"
+                            />
+                            <motion.div 
+                                key="user-menu-modal"
+                                initial={{ y: 10, opacity: 0 }}
+                                animate={{ y: 0, opacity: 1 }}
+                                exit={{ y: 10, opacity: 0 }}
+                                className="absolute top-full right-6 mt-4 w-64 bg-white/95 backdrop-blur-xl rounded-[2.5rem] shadow-2xl border border-slate-100 p-3 z-[80] overflow-hidden"
+                            >
+                                <div className="px-5 py-4 mb-2">
+                                    <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.2em] mb-1">Signed in as</p>
+                                    <p className="font-bold text-slate-700 truncate">{auth.user.name}</p>
+                                </div>
+                                <div className="space-y-1">
+                                    <Link href={route('profile.edit')} className="flex items-center px-5 py-4 text-sm font-bold text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 transition-all rounded-[1.5rem] group/item">
+                                        <div className="p-2 bg-slate-50 rounded-xl mr-4 group-hover/item:bg-emerald-100 transition-colors">
+                                            <User size={18} className="text-slate-400 group-hover/item:text-emerald-600" />
+                                        </div>
+                                        My Profile
+                                    </Link>
+                                    <button 
+                                        onClick={() => showConfirm({
+                                            title: 'Sign Out?',
+                                            message: 'Ready to end your session?',
+                                            confirmText: 'Sign Out',
+                                            type: 'warning',
+                                            action: () => router.post(route('logout'))
+                                        })}
+                                        className="flex items-center w-full text-left px-5 py-4 text-sm font-bold text-red-500 hover:bg-red-50 transition-all rounded-[1.5rem] group/item"
+                                    >
+                                        <div className="p-2 bg-red-50/50 rounded-xl mr-4 group-hover/item:bg-red-100 transition-colors">
+                                            <LogOut size={18} className="text-red-400 group-hover/item:text-red-600" />
+                                        </div>
+                                        Sign Out
+                                    </button>
+                                </div>
+                            </motion.div>
+                        </div>
+                    )}
+                </AnimatePresence>
             </nav>
 
-            <div className="flex-1 flex flex-col overflow-hidden">
-                <main className="flex-1 overflow-y-auto p-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+            {/* Mobile Bottom Navigation */}
+            <nav className="md:hidden fixed bottom-0 left-0 right-0 z-[100] px-6 pb-8">
+                <div className="bg-slate-900/90 backdrop-blur-2xl rounded-[2.5rem] p-2 flex items-center justify-between shadow-2xl shadow-slate-900/40 border border-white/10">
+                    <Link 
+                        href={route('dashboard')}
+                        className={`flex-1 flex flex-col items-center justify-center py-3 rounded-[1.8rem] transition-all relative ${route().current('dashboard') ? 'text-white' : 'text-slate-500'}`}
+                    >
+                        {route().current('dashboard') && (
+                            <motion.div layoutId="mobile-nav-pill" className="absolute inset-0 bg-emerald-500 rounded-[1.8rem] z-0" />
+                        )}
+                        <LayoutDashboard size={20} className="relative z-10" />
+                        <span className={`text-[8px] font-black uppercase tracking-widest mt-1.5 relative z-10 ${route().current('dashboard') ? 'opacity-100' : 'opacity-40'}`}>Home</span>
+                    </Link>
+
+                    <Link 
+                        href={route('todos.index')}
+                        className={`flex-1 flex flex-col items-center justify-center py-3 rounded-[1.8rem] transition-all relative ${route().current('todos.*') ? 'text-white' : 'text-slate-500'}`}
+                    >
+                        {route().current('todos.*') && (
+                            <motion.div layoutId="mobile-nav-pill" className="absolute inset-0 bg-emerald-500 rounded-[1.8rem] z-0" />
+                        )}
+                        <ListTodo size={20} className="relative z-10" />
+                        <span className={`text-[8px] font-black uppercase tracking-widest mt-1.5 relative z-10 ${route().current('todos.*') ? 'opacity-100' : 'opacity-40'}`}>Sprint</span>
+                    </Link>
+
+                    <Link 
+                        href={route('habits.index')}
+                        className={`flex-1 flex flex-col items-center justify-center py-3 rounded-[1.8rem] transition-all relative ${route().current('habits.*') ? 'text-white' : 'text-slate-500'}`}
+                    >
+                        {route().current('habits.*') && (
+                            <motion.div layoutId="mobile-nav-pill" className="absolute inset-0 bg-emerald-500 rounded-[1.8rem] z-0" />
+                        )}
+                        <Flame size={20} className="relative z-10" />
+                        <span className={`text-[8px] font-black uppercase tracking-widest mt-1.5 relative z-10 ${route().current('habits.*') ? 'opacity-100' : 'opacity-40'}`}>Discipline</span>
+                    </Link>
+
+                    <Link 
+                        href={route('mastery.index')}
+                        className={`flex-1 flex flex-col items-center justify-center py-3 rounded-[1.8rem] transition-all relative ${route().current('mastery.*') ? 'text-white' : 'text-slate-500'}`}
+                    >
+                        {route().current('mastery.*') && (
+                            <motion.div layoutId="mobile-nav-pill" className="absolute inset-0 bg-emerald-500 rounded-[1.8rem] z-0" />
+                        )}
+                        <Trophy size={20} className="relative z-10" />
+                        <span className={`text-[8px] font-black uppercase tracking-widest mt-1.5 relative z-10 ${route().current('mastery.*') ? 'opacity-100' : 'opacity-40'}`}>Vision</span>
+                    </Link>
+                </div>
+            </nav>
+
+            <div className="flex-1 flex flex-col min-h-0 w-full">
+                <main className="flex-1 overflow-y-auto p-4 md:p-8 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-32">
                     {children}
                 </main>
             </div>

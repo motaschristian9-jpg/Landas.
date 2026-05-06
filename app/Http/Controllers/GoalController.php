@@ -15,40 +15,8 @@ class GoalController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Goal::where('user_id', auth()->id())->with(['category', 'priority']);
-
-        // Search filter
-        if ($request->filled('search')) {
-            $query->where('title', 'like', '%' . $request->search . '%')
-                  ->orWhere('description', 'like', '%' . $request->search . '%');
-        }
-
-        // Status filter
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
-        }
-
-        // Category filter
-        if ($request->filled('category')) {
-            $query->where('category_id', $request->category);
-        }
-
-        // Sorting
-        $sort = $request->get('sort', 'latest');
-        switch ($sort) {
-            case 'oldest': $query->oldest(); break;
-            case 'deadline': $query->orderByRaw('target_date IS NULL, target_date ASC'); break;
-            default: $query->latest(); break;
-        }
-
-        $goals = $query->paginate(10)->withQueryString();
-        
-        $categories = Category::all();
-        $priorities = Priority::orderBy('level', 'asc')->get();
-        
-        return \Inertia\Inertia::render('Goals/Index', compact('goals', 'categories', 'priorities'));
+        return redirect()->route('mastery.index');
     }
-
 
     /**
      * Store a newly created resource in storage.
@@ -66,7 +34,7 @@ class GoalController extends Controller
 
         auth()->user()->goals()->create($validated);
 
-        return redirect()->route('goals.index')->with('success', 'Goal created successfully.');
+        return redirect()->route('mastery.index')->with('success', 'Vision launched successfully.');
     }
 
     /**
@@ -74,8 +42,7 @@ class GoalController extends Controller
      */
     public function show(Goal $goal)
     {
-        $goal->load(['category', 'priority']);
-        return \Inertia\Inertia::render('Goals/Show', compact('goal'));
+        return redirect()->route('mastery.index');
     }
 
     /**
@@ -83,9 +50,7 @@ class GoalController extends Controller
      */
     public function edit(Goal $goal)
     {
-        $categories = Category::all();
-        $priorities = Priority::orderBy('level', 'asc')->get();
-        return view('goals.edit', compact('goal', 'categories', 'priorities'));
+        return redirect()->route('mastery.index');
     }
 
     /**
@@ -106,14 +71,20 @@ class GoalController extends Controller
                 'status' => 'required|in:pending,in_progress,completed',
             ]);
 
-            $goal->update($validated);
+            $data = $validated;
+            if ($data['status'] === 'completed' && $goal->status !== 'completed') {
+                $data['completed_at'] = now();
+            } elseif ($data['status'] !== 'completed') {
+                $data['completed_at'] = null;
+            }
 
-            return redirect()->route('goals.index')->with('success', 'Goal updated successfully.');
+            $goal->update($data);
+
+            return redirect()->route('mastery.index')->with('success', 'Vision updated successfully.');
         } catch (\Illuminate\Validation\ValidationException $e) {
             return redirect()->back()
                 ->withErrors($e->validator)
-                ->withInput()
-                ->with('editing_id', $goal->id);
+                ->withInput();
         }
     }
 
@@ -127,6 +98,48 @@ class GoalController extends Controller
         }
         $goal->delete();
 
-        return redirect()->route('goals.index')->with('success', 'Goal deleted successfully.');
+        return redirect()->route('mastery.index')->with('success', 'Vision removed successfully.');
+    }
+
+    public function addMilestone(Request $request, Goal $goal)
+    {
+        if ($goal->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+        ]);
+
+        $goal->milestones()->create($validated);
+
+        return redirect()->back()->with('success', 'Milestone added.');
+    }
+
+    public function toggleMilestone(Goal $goal, \App\Models\GoalMilestone $milestone, \App\Services\GamificationService $gamificationService)
+    {
+        if ($goal->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        $wasCompleted = $milestone->is_completed;
+        $milestone->update(['is_completed' => !$milestone->is_completed]);
+
+        if ($milestone->is_completed && !$wasCompleted) {
+            $gamificationService->awardXP(auth()->user(), 5);
+        }
+
+        return redirect()->back()->with('success', 'Milestone updated.');
+    }
+
+    public function deleteMilestone(Goal $goal, \App\Models\GoalMilestone $milestone)
+    {
+        if ($goal->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        $milestone->delete();
+
+        return redirect()->back()->with('success', 'Milestone removed.');
     }
 }

@@ -33,6 +33,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'hearts_count',
     ];
 
     /**
@@ -66,5 +67,15 @@ class User extends Authenticatable
     public function todos()
     {
         return $this->hasMany(Todo::class);
+    }
+
+    public function habits()
+    {
+        return $this->hasMany(Habit::class);
+    }
+
+    public function stats()
+    {
+        return $this->hasOne(UserStat::class);
     }
 }

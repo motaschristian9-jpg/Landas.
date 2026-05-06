@@ -14,6 +14,7 @@ class Goal extends Model
         'priority_id',
         'target_date',
         'status',
+        'completed_at',
     ];
 
     public function user()
@@ -29,5 +30,10 @@ class Goal extends Model
     public function priority()
     {
         return $this->belongsTo(Priority::class);
+    }
+
+    public function milestones()
+    {
+        return $this->hasMany(GoalMilestone::class);
     }
 }
