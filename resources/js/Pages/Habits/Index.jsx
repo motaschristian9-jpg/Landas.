@@ -404,7 +404,7 @@ function HabitSlider({ habit, onComplete, processing }) {
             >
                 <motion.div 
                     style={{ opacity }}
-                    className="absolute inset-0 flex items-center justify-center font-black text-[10px] uppercase tracking-[0.4em] text-slate-400 pointer-events-none"
+                    className="absolute inset-0 flex items-center justify-center pl-16 md:pl-0 font-black text-[10px] uppercase tracking-[0.15em] md:tracking-[0.4em] text-slate-400 pointer-events-none whitespace-nowrap"
                 >
                     {processing ? 'Processing...' : 'Slide to Discipline'}
                 </motion.div>
