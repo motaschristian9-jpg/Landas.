@@ -10,6 +10,7 @@ import {
 import ConfirmationModal from '@/Components/ConfirmationModal';
 
 export default function Index({ habits, heartsCount }) {
+    const [localHabits, setLocalHabits] = useState(habits?.data || []);
     const [showModal, setShowModal] = useState(false);
     const [editingHabit, setEditingHabit] = useState(null);
     const [habitToDelete, setHabitToDelete] = useState(null);
@@ -63,8 +64,28 @@ export default function Index({ habits, heartsCount }) {
         }
     };
 
+    useEffect(() => {
+        if (habits?.current_page > 1) {
+            setLocalHabits(prev => {
+                const newItems = habits.data.filter(item => !prev.some(p => p.id === item.id));
+                return [...prev, ...newItems];
+            });
+        } else {
+            setLocalHabits(habits?.data || []);
+        }
+    }, [habits]);
+
     const deleteHabit = (habit) => {
         setHabitToDelete(habit);
+    };
+
+    const loadMore = () => {
+        if (!habits?.next_page_url) return;
+        router.visit(habits.next_page_url, {
+            only: ['habits'],
+            preserveState: true,
+            preserveScroll: true,
+        });
     };
 
     const confirmDelete = () => {
@@ -132,7 +153,7 @@ export default function Index({ habits, heartsCount }) {
                 {/* 2. Habits Grid */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
                     <AnimatePresence mode="popLayout">
-                        {habits.map((habit) => (
+                        {localHabits.map((habit) => (
                             <motion.div
                                 key={habit.id}
                                 layout
@@ -200,14 +221,25 @@ export default function Index({ habits, heartsCount }) {
                                         <div className="flex space-x-2">
                                             {(() => {
                                                 const weeks = [];
-                                                for (let i = 0; i < habit.last_30_days.length; i += 7) {
-                                                    weeks.push(habit.last_30_days.slice(i, i + 7));
+                                                const paddedDays = [];
+                                                if (habit.last_30_days && habit.last_30_days.length > 0) {
+                                                    const parts = habit.last_30_days[0].date.split('-');
+                                                    const firstDate = new Date(parts[0], parts[1] - 1, parts[2]);
+                                                    let dayOfWeek = firstDate.getDay();
+                                                    let emptyCells = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+                                                    for (let i = 0; i < emptyCells; i++) {
+                                                        paddedDays.push(null);
+                                                    }
+                                                    paddedDays.push(...habit.last_30_days);
+                                                }
+                                                for (let i = 0; i < paddedDays.length; i += 7) {
+                                                    weeks.push(paddedDays.slice(i, i + 7));
                                                 }
                                                 return weeks.map((week, wIdx) => (
                                                     <div key={wIdx} className="flex flex-col space-y-2">
                                                         {week.map((day, dIdx) => {
-                                                            const overallIdx = wIdx * 7 + dIdx;
-                                                            const isToday = overallIdx === habit.last_30_days.length - 1;
+                                                            if (!day) return <div key={dIdx} className="w-3.5 h-3.5 rounded-sm bg-transparent" />;
+                                                            const isToday = day.date === habit.last_30_days[habit.last_30_days.length - 1].date;
                                                             const isDone = day.completed || (isToday && habit.is_completed_today);
                                                             return (
                                                                 <div 
@@ -266,7 +298,19 @@ export default function Index({ habits, heartsCount }) {
                         ))}
                     </AnimatePresence>
 
-                    {habits.length === 0 && (
+                    {habits?.next_page_url && (
+                        <div className="lg:col-span-2 pt-4">
+                            <button 
+                                onClick={loadMore}
+                                className="w-full py-6 flex items-center justify-center space-x-2 bg-slate-50 border-2 border-dashed border-slate-200 rounded-[2.5rem] text-[10px] font-black text-slate-400 uppercase tracking-widest hover:text-emerald-500 hover:border-emerald-200 hover:bg-emerald-50 transition-all active:scale-95"
+                            >
+                                <ArrowRight size={16} />
+                                <span>Load More Habits</span>
+                            </button>
+                        </div>
+                    )}
+
+                    {localHabits.length === 0 && (
                         <div className="lg:col-span-2 py-32 flex flex-col items-center justify-center border-4 border-dashed border-slate-50 rounded-[4rem]">
                             <div className="w-24 h-24 rounded-[2rem] bg-slate-50 flex items-center justify-center text-slate-200 mb-8">
                                 <Activity size={48} />
@@ -294,9 +338,14 @@ export default function Index({ habits, heartsCount }) {
                         className="relative w-full max-w-lg bg-white rounded-[3.5rem] p-10 border-4 border-white shadow-2xl"
                     >
 
-                        <h2 className="text-3xl font-black text-slate-900 tracking-tighter mb-8 relative z-10">
-                            {editingHabit ? 'Refine Discipline' : 'Forge Discipline'}<span className="text-emerald-500">.</span>
-                        </h2>
+                        <div className="flex justify-between items-start mb-8 relative z-10">
+                            <h2 className="text-3xl font-black text-slate-900 tracking-tighter">
+                                {editingHabit ? 'Refine Discipline' : 'Forge Discipline'}<span className="text-emerald-500">.</span>
+                            </h2>
+                            <button onClick={() => setShowModal(false)} type="button" className="w-10 h-10 bg-slate-50 hover:bg-rose-50 text-slate-400 hover:text-rose-500 rounded-xl flex items-center justify-center transition-all group shadow-sm shrink-0">
+                                <svg className="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3"><path d="M6 18L18 6M6 6l12 12"/></svg>
+                            </button>
+                        </div>
                         
                         <form onSubmit={submit} className="space-y-8 relative z-10">
                             <div>

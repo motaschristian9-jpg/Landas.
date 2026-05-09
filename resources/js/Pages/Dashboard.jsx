@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, Link, useForm, usePage } from '@inertiajs/react';
+import { Head, Link, useForm, usePage, router } from '@inertiajs/react';
 import ActionShelf from '@/Components/ActionShelf';
 import VisionHub from '@/Components/VisionHub';
 import TaskShelf from '@/Components/TaskShelf';
@@ -17,6 +17,42 @@ export default function Dashboard({
 }) {
     const { auth } = usePage().props;
     const [dismissedSuggestion, setDismissedSuggestion] = useState(false);
+
+    const [localTodos, setLocalTodos] = useState(todayTodos.data || []);
+    const [localGoals, setLocalGoals] = useState(goals.data || []);
+
+    useEffect(() => {
+        if (todayTodos.current_page > 1) {
+            setLocalTodos(prev => {
+                const newItems = todayTodos.data.filter(item => !prev.some(p => p.id === item.id));
+                return [...prev, ...newItems];
+            });
+        } else {
+            setLocalTodos(todayTodos.data || []);
+        }
+    }, [todayTodos]);
+
+
+
+    useEffect(() => {
+        if (goals.current_page > 1) {
+            setLocalGoals(prev => {
+                const newItems = goals.data.filter(item => !prev.some(p => p.id === item.id));
+                return [...prev, ...newItems];
+            });
+        } else {
+            setLocalGoals(goals.data || []);
+        }
+    }, [goals]);
+
+    const loadMore = (resource, nextUrl) => {
+        if (!nextUrl) return;
+        router.visit(nextUrl, {
+            only: [resource],
+            preserveState: true,
+            preserveScroll: true,
+        });
+    };
 
     const hour = new Date().getHours();
     let greeting = 'Good Day';
@@ -124,12 +160,19 @@ export default function Dashboard({
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-12">
                     {/* Execution Center (Pillar 1) */}
                     <div className="lg:col-span-7">
-                        <TaskShelf todos={todayTodos} />
+                        <TaskShelf 
+                            todos={localTodos} 
+                            nextUrl={todayTodos.next_page_url} 
+                            onLoadMore={() => loadMore('todayTodos', todayTodos.next_page_url)} 
+                        />
                     </div>
 
                     {/* Discipline Module (Pillar 2) */}
                     <div className="lg:col-span-5">
-                        <ActionShelf habits={dailyHabits} heartsCount={heartsCount} />
+                        <ActionShelf 
+                            habits={dailyHabits.data || []} 
+                            heartsCount={heartsCount} 
+                        />
                     </div>
                 </div>
 
@@ -140,7 +183,11 @@ export default function Dashboard({
                         <span className="text-[10px] font-black uppercase tracking-[0.5em] text-slate-400 text-center">The Vision Roadmap</span>
                         <div className="w-12 h-[3px] bg-slate-200 rounded-full"></div>
                     </div>
-                    <VisionHub goals={goals} />
+                    <VisionHub 
+                        goals={localGoals} 
+                        nextUrl={goals.next_page_url} 
+                        onLoadMore={() => loadMore('goals', goals.next_page_url)} 
+                    />
                 </div>
 
             </div>

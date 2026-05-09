@@ -1,13 +1,40 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, Link, useForm, router } from '@inertiajs/react';
+import { Head, useForm, router } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Target, CheckCircle2, Trash2, Calendar, Edit3, ChevronRight, Sparkles, Map, Flag, Compass, BarChart3 } from 'lucide-react';
+import { Plus, Target, CheckCircle2, Trash2, Edit3, ChevronRight, Compass, TrendingUp, Check, MapPin } from 'lucide-react';
 
 export default function Index({ goals, categories, priorities }) {
-    const [selectedGoal, setSelectedGoal] = useState(goals[0] || null);
+    const [localGoals, setLocalGoals] = useState(goals.data || []);
+    const [selectedGoal, setSelectedGoal] = useState(null);
     const [showGoalModal, setShowGoalModal] = useState(false);
     const [showEditGoalModal, setShowEditGoalModal] = useState(false);
+
+    useEffect(() => {
+        if (goals.current_page > 1) {
+            setLocalGoals(prev => {
+                const newItems = goals.data.filter(item => !prev.some(p => p.id === item.id));
+                return [...prev, ...newItems];
+            });
+        } else {
+            setLocalGoals(goals.data || []);
+        }
+    }, [goals]);
+
+    // Initialize or keep selected goal in sync
+    useEffect(() => {
+        if (localGoals.length > 0) {
+            if (!selectedGoal) {
+                setSelectedGoal(localGoals[0]);
+            } else {
+                const updated = localGoals.find(g => g.id === selectedGoal.id);
+                if (updated) setSelectedGoal(updated);
+                else setSelectedGoal(localGoals[0]);
+            }
+        } else {
+            setSelectedGoal(null);
+        }
+    }, [localGoals]);
 
     const { data, setData, post, processing, reset } = useForm({
         title: '',
@@ -77,9 +104,18 @@ export default function Index({ goals, categories, priorities }) {
     const deleteGoal = (goal) => {
         if (confirm(`Are you sure you want to delete the vision '${goal.title}'?`)) {
             router.delete(route('goals.destroy', goal.id), {
-                onSuccess: () => setSelectedGoal(goals[0] || null),
+                onSuccess: () => setSelectedGoal(localGoals[0] || null),
             });
         }
+    };
+
+    const loadMore = () => {
+        if (!goals.next_page_url) return;
+        router.visit(goals.next_page_url, {
+            only: ['goals'],
+            preserveState: true,
+            preserveScroll: true,
+        });
     };
 
     const calculateProgress = (goal) => {
@@ -113,7 +149,7 @@ export default function Index({ goals, categories, priorities }) {
                             </div>
                             <div>
                                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Total Visions</p>
-                                <p className="text-2xl font-black text-slate-900 leading-none">{goals.length}</p>
+                                <p className="text-2xl font-black text-slate-900 leading-none">{goals.total || localGoals.length}</p>
                             </div>
                         </div>
 
@@ -123,7 +159,7 @@ export default function Index({ goals, categories, priorities }) {
                             </div>
                             <div>
                                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Completed</p>
-                                <p className="text-2xl font-black text-emerald-600 leading-none">{goals.filter(g => calculateProgress(g) === 100).length}</p>
+                                <p className="text-2xl font-black text-emerald-600 leading-none">{localGoals.filter(g => calculateProgress(g) === 100).length}</p>
                             </div>
                         </div>
 
@@ -136,197 +172,213 @@ export default function Index({ goals, categories, priorities }) {
                     </div>
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-                    
-                    <div className="lg:col-span-4 space-y-4 h-full">
-                        <div className="flex items-center justify-between px-4 mb-4">
-                            <h3 className="text-xs font-black text-slate-400 uppercase tracking-[0.3em]">Master Catalog</h3>
-                            <div className="p-1 bg-slate-100 rounded-lg flex space-x-1">
-                                <button className="w-8 h-8 rounded-md bg-white shadow-sm flex items-center justify-center text-slate-600"><Compass size={14} /></button>
-                                <button className="w-8 h-8 rounded-md flex items-center justify-center text-slate-400 hover:text-slate-600"><Map size={14} /></button>
-                            </div>
+                {localGoals.length === 0 ? (
+                    <motion.div 
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="py-24 px-6 text-center border-2 border-dashed border-slate-200 bg-slate-50/50 rounded-[3rem] flex flex-col items-center justify-center"
+                    >
+                        <div className="w-20 h-20 bg-white rounded-[2rem] shadow-xl shadow-slate-200/50 flex items-center justify-center text-emerald-500 mb-6">
+                            <Target size={40} strokeWidth={2} />
                         </div>
-
-                        <div className="space-y-4 max-h-[70vh] overflow-y-auto pr-2 hide-scrollbar">
-                            {goals.map((goal) => (
-                                <motion.button
+                        <h3 className="text-xl font-black text-slate-800 tracking-tight mb-2">No Vision Defined</h3>
+                        <p className="text-slate-500 font-medium text-sm max-w-sm mb-8 mx-auto">
+                            Your master backlog is empty. Define your first long-term vision and break it down into actionable milestones.
+                        </p>
+                        <button 
+                            onClick={() => setShowGoalModal(true)}
+                            className="inline-flex items-center space-x-2 bg-slate-900 hover:bg-emerald-500 text-white px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest transition-all shadow-lg shadow-slate-200 hover:shadow-emerald-200 active:scale-95"
+                        >
+                            <Plus size={16} strokeWidth={3} />
+                            <span>Launch New Vision</span>
+                        </button>
+                    </motion.div>
+                ) : (
+                    <>
+                        {/* Vision Cards Carousel */}
+                        <div className="flex overflow-x-auto snap-x snap-mandatory gap-6 pb-6 -mx-4 px-4 sm:mx-0 sm:px-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']">
+                            {localGoals.map((goal) => (
+                                <button
                                     key={goal.id}
-                                    whileHover={{ x: 8 }}
                                     onClick={() => setSelectedGoal(goal)}
-                                    className={`w-full text-left p-8 rounded-[3rem] transition-all duration-500 group relative overflow-hidden border-2 ${
+                                    className={`snap-center shrink-0 w-72 p-6 rounded-[2.5rem] border-2 text-left transition-all ${
                                         selectedGoal?.id === goal.id 
-                                        ? 'bg-slate-900 border-slate-900 text-white shadow-2xl shadow-slate-200' 
-                                        : 'bg-white/60 border-white text-slate-600 hover:bg-white hover:shadow-xl'
+                                        ? 'border-emerald-500 shadow-xl shadow-emerald-100/50 bg-emerald-50/30' 
+                                        : 'border-slate-100 shadow-lg shadow-slate-100/50 bg-white hover:border-emerald-200'
                                     }`}
                                 >
-                                    <div className="relative z-10">
-                                        <div className="flex items-center justify-between mb-4">
-                                            <div className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest ${
-                                                selectedGoal?.id === goal.id ? 'bg-white/10 text-emerald-400' : 'bg-emerald-50 text-emerald-600'
-                                            }`}>
-                                                {goal.category?.name || 'Vision'}
-                                            </div>
-                                            <div className="flex items-center space-x-1">
-                                                <span className={`text-[10px] font-black ${selectedGoal?.id === goal.id ? 'text-white/40' : 'text-slate-300'}`}>
-                                                    {calculateProgress(goal)}%
-                                                </span>
-                                            </div>
+                                    <div className="flex items-center justify-between mb-6">
+                                        <div className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all ${
+                                            selectedGoal?.id === goal.id ? 'bg-emerald-500 text-white shadow-inner' : 'bg-slate-50 text-slate-400'
+                                        }`}>
+                                            <Target size={24} strokeWidth={2.5} />
                                         </div>
-                                        <h4 className="text-2xl font-black tracking-tighter leading-tight mb-2">{goal.title}</h4>
-                                        <div className="w-full h-1 bg-white/10 rounded-full overflow-hidden">
-                                            <motion.div 
-                                                initial={{ width: 0 }}
-                                                animate={{ width: `${calculateProgress(goal)}%` }}
-                                                className={`h-full ${selectedGoal?.id === goal.id ? 'bg-emerald-500' : 'bg-emerald-500'}`}
-                                            />
-                                        </div>
-                                    </div>
-                                    {selectedGoal?.id === goal.id && (
-                                        <div className="absolute right-6 top-1/2 -translate-y-1/2 opacity-20">
-                                            <ChevronRight size={48} strokeWidth={3} />
-                                        </div>
-                                    )}
-                                </motion.button>
-                            ))}
-
-                            {goals.length === 0 && (
-                                <div className="p-10 text-center bg-white/40 rounded-[3rem] border-2 border-dashed border-slate-200">
-                                    <p className="text-slate-400 font-bold italic">No visions drafted yet.</p>
-                                </div>
-                            )}
-                        </div>
-                    </div>
-
-                    <div className="lg:col-span-8">
-                        <AnimatePresence mode="wait">
-                            {selectedGoal ? (
-                                <motion.div
-                                    key={selectedGoal.id}
-                                    initial={{ opacity: 0, x: 20 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    exit={{ opacity: 0, x: -20 }}
-                                    className="bg-white rounded-[3rem] border-2 border-slate-50 shadow-xl shadow-slate-100/50 p-12 flex flex-col min-h-[600px]"
-                                >
-                                    <div className="flex flex-col md:flex-row md:items-center justify-between mb-12 gap-6">
-                                        <div className="flex items-center space-x-6">
-                                            <div className="w-24 h-24 rounded-[3rem] bg-slate-900 flex items-center justify-center text-white shadow-2xl shadow-slate-300">
-                                                <Target size={48} strokeWidth={2.5} />
-                                            </div>
-                                            <div>
-                                                <div className="flex items-center space-x-2 mb-2">
-                                                    <Flag size={14} className="text-emerald-500" />
-                                                    <p className="text-[10px] font-black text-emerald-500 uppercase tracking-[0.4em]">Active Blueprint</p>
-                                                </div>
-                                                <h2 className="text-5xl font-black text-slate-800 tracking-tighter leading-none">{selectedGoal.title}</h2>
-                                            </div>
-                                        </div>
-                                        
-                                        <div className="flex items-center space-x-2">
-                                            <button 
-                                                onClick={() => openEditModal(selectedGoal)}
-                                                className="px-6 py-4 rounded-2xl bg-white border border-slate-100 text-slate-400 font-black text-[10px] uppercase tracking-widest hover:text-emerald-600 transition-all shadow-sm flex items-center space-x-2"
-                                            >
-                                                <Edit3 size={14} />
-                                                <span>Refine</span>
-                                            </button>
-                                        </div>
-                                    </div>
-
-                                    {selectedGoal.description && (
-                                        <div className="mb-12 p-8 bg-slate-50/50 rounded-[3rem] border border-white">
-                                            <p className="text-slate-500 font-bold leading-relaxed italic">
-                                                "{selectedGoal.description}"
+                                        <div className="text-right">
+                                            <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Progress</span>
+                                            <p className={`font-black text-lg leading-none mt-1 ${selectedGoal?.id === goal.id ? 'text-emerald-500' : 'text-slate-800'}`}>
+                                                {calculateProgress(goal)}%
                                             </p>
                                         </div>
-                                    )}
+                                    </div>
+                                    <div className="flex items-center justify-between mb-2">
+                                        <div className={`px-2 py-1 rounded-md text-[8px] font-black uppercase tracking-widest ${
+                                            selectedGoal?.id === goal.id ? 'bg-emerald-100 text-emerald-600' : 'bg-slate-100 text-slate-500'
+                                        }`}>
+                                            {goal.category?.name || 'Vision'}
+                                        </div>
+                                    </div>
+                                    <h3 className="font-black text-xl text-slate-800 tracking-tighter leading-tight mb-4 line-clamp-2">
+                                        {goal.title}
+                                    </h3>
+                                    <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden mt-auto">
+                                        <motion.div 
+                                            className={`h-full rounded-full ${selectedGoal?.id === goal.id ? 'bg-emerald-500' : 'bg-slate-300'}`}
+                                            initial={{ width: 0 }}
+                                            animate={{ width: `${calculateProgress(goal)}%` }}
+                                            transition={{ duration: 1 }}
+                                        />
+                                    </div>
+                                </button>
+                            ))}
+                            {goals.next_page_url && (
+                                <button
+                                    onClick={loadMore}
+                                    className="snap-center shrink-0 w-32 p-6 rounded-[2.5rem] border-2 border-slate-100 shadow-lg shadow-slate-100/50 bg-slate-50 hover:bg-emerald-50 hover:text-emerald-500 hover:border-emerald-100 text-slate-400 flex flex-col items-center justify-center transition-all group active:scale-95"
+                                >
+                                    <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center mb-2 shadow-sm group-hover:bg-emerald-100 group-hover:text-emerald-600">
+                                        <ChevronRight size={24} />
+                                    </div>
+                                    <span className="text-[10px] font-black uppercase tracking-widest text-center">Load More</span>
+                                </button>
+                            )}
+                        </div>
 
-                                    <div className="flex-1 space-y-6 mb-12">
-                                        <div className="flex items-center justify-between px-2 mb-4">
-                                            <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest">Execution Roadmap</h4>
-                                            <div className="flex items-center space-x-2 text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                                                <BarChart3 size={14} />
-                                                <span>{selectedGoal.milestones.filter(m => m.is_completed).length} / {selectedGoal.milestones.length} Milestones</span>
+                        {/* Mastery Track Panel */}
+                        <AnimatePresence mode="wait">
+                            {selectedGoal && (
+                                <motion.div 
+                                    key={selectedGoal.id}
+                                    initial={{ opacity: 0, y: 10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: -10 }}
+                                    className="bg-white rounded-[3rem] border-2 border-slate-100 shadow-xl shadow-slate-100/50 p-6 md:p-10"
+                                >
+                                    <div className="flex flex-col md:flex-row gap-10">
+                                        {/* Left: Info */}
+                                        <div className="md:w-1/3">
+                                            <div className="bg-slate-50 rounded-[2rem] p-6 h-full flex flex-col justify-between">
+                                                <div>
+                                                    <div className="flex items-center space-x-2 mb-4">
+                                                        <MapPin size={16} className="text-emerald-500" />
+                                                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Context</span>
+                                                    </div>
+                                                    <h2 className="text-3xl font-black text-slate-800 tracking-tighter leading-tight mb-4">{selectedGoal.title}</h2>
+                                                    <p className="text-sm font-bold text-slate-600 leading-relaxed italic">
+                                                        "{selectedGoal.description || 'No description provided.'}"
+                                                    </p>
+                                                </div>
+                                                <div className="mt-8 flex items-center gap-3">
+                                                    <button 
+                                                        onClick={() => openEditModal(selectedGoal)} 
+                                                        className="flex-1 flex items-center justify-center space-x-2 bg-slate-900 hover:bg-emerald-500 text-white px-4 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-lg shadow-slate-200 active:scale-95"
+                                                    >
+                                                        <Edit3 size={14} />
+                                                        <span>Refine Vision</span>
+                                                    </button>
+                                                    <button 
+                                                        onClick={() => deleteGoal(selectedGoal)} 
+                                                        title="Delete Vision"
+                                                        className="w-11 h-11 shrink-0 bg-rose-50 text-rose-500 hover:bg-rose-500 hover:text-white rounded-xl flex items-center justify-center transition-all shadow-sm active:scale-95"
+                                                    >
+                                                        <Trash2 size={16} strokeWidth={2.5} />
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
 
-                                        <div className="relative">
-                                            <div className="absolute left-10 top-0 bottom-0 w-1 bg-slate-100 rounded-full"></div>
-                                            
-                                            <div className="space-y-4 relative">
-                                                {selectedGoal.milestones.map((ms, idx) => (
-                                                    <motion.div 
-                                                        key={ms.id} 
-                                                        initial={{ opacity: 0, y: 20 }}
-                                                        animate={{ opacity: 1, y: 0 }}
-                                                        transition={{ delay: idx * 0.1 }}
-                                                        className="group flex items-start space-x-8"
-                                                    >
+                                        {/* Right: Timeline */}
+                                        <div className="md:w-2/3">
+                                            <div className="flex items-center justify-between mb-8">
+                                                <div className="flex items-center space-x-2">
+                                                    <TrendingUp size={16} className="text-emerald-500" />
+                                                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Mastery Track</span>
+                                                </div>
+                                                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest bg-slate-100 px-3 py-1 rounded-full">
+                                                    {selectedGoal.milestones?.filter(m => m.is_completed).length || 0} / {selectedGoal.milestones?.length || 0} Steps
+                                                </span>
+                                            </div>
+
+                                            <div className="relative pl-6 space-y-6 before:absolute before:inset-y-0 before:left-[11px] before:w-0.5 before:bg-slate-100">
+                                                {(selectedGoal.milestones || []).map((ms, index) => (
+                                                    <div key={ms.id} className="relative group">
+                                                        {/* Timeline Node */}
                                                         <button 
                                                             onClick={() => toggleMilestone(ms.id)}
-                                                            className={`shrink-0 w-20 h-20 rounded-[2.5rem] border-4 flex items-center justify-center transition-all duration-500 relative z-10 ${
-                                                                ms.is_completed 
-                                                                ? 'bg-emerald-500 border-white text-white shadow-xl shadow-emerald-200' 
-                                                                : 'bg-white border-slate-50 text-slate-100 hover:border-emerald-500 hover:text-emerald-500 shadow-sm'
+                                                            className={`absolute -left-[30px] top-1/2 -translate-y-1/2 w-8 h-8 rounded-full flex items-center justify-center border-[6px] border-white transition-colors z-10 ${
+                                                                ms.is_completed ? 'bg-emerald-500 text-white' : 'bg-slate-200 group-hover:bg-emerald-300 text-transparent'
                                                             }`}
                                                         >
-                                                            <CheckCircle2 size={32} strokeWidth={2.5} />
+                                                            <Check size={12} strokeWidth={4} className={ms.is_completed ? 'opacity-100' : 'opacity-0'} />
                                                         </button>
 
-                                                        <div className={`flex-1 p-8 rounded-[2.5rem] border-2 transition-all duration-500 flex items-center justify-between ${
-                                                            ms.is_completed 
-                                                            ? 'bg-slate-50 border-white opacity-60' 
-                                                            : 'bg-white border-slate-50 shadow-sm hover:shadow-xl hover:border-emerald-100'
-                                                        }`}>
-                                                            <span className={`text-2xl font-black tracking-tight ${ms.is_completed ? 'text-slate-400 line-through' : 'text-slate-800'}`}>
-                                                                {ms.title}
-                                                            </span>
-                                                            <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Step {idx + 1}</span>
+                                                        <div className="pl-4">
+                                                            <button 
+                                                                onClick={() => toggleMilestone(ms.id)}
+                                                                className={`block w-full text-left p-4 rounded-2xl transition-all ${
+                                                                    ms.is_completed ? 'bg-emerald-50/50 opacity-60' : 'bg-slate-50 hover:bg-slate-100'
+                                                                }`}
+                                                            >
+                                                                <div className="relative inline-block">
+                                                                    <span className={`text-sm font-bold transition-colors ${ms.is_completed ? 'text-slate-500' : 'text-slate-800'}`}>
+                                                                        {ms.title}
+                                                                    </span>
+                                                                    <motion.div 
+                                                                        initial={false}
+                                                                        animate={{ width: ms.is_completed ? '100%' : '0%' }}
+                                                                        transition={{ duration: 0.3 }}
+                                                                        className="absolute left-0 top-1/2 h-0.5 bg-slate-500 -translate-y-1/2 rounded-full"
+                                                                        style={{ originX: 0 }}
+                                                                    />
+                                                                </div>
+                                                            </button>
                                                         </div>
-                                                    </motion.div>
-                                                ))}
-
-                                                {selectedGoal.milestones.length === 0 && (
-                                                    <div className="py-24 text-center bg-slate-50/50 border-2 border-dashed border-slate-200 rounded-[3rem] ml-28">
-                                                        <Sparkles size={64} className="mx-auto text-slate-200 mb-6" />
-                                                        <h4 className="text-xl font-black text-slate-400 tracking-tight">Zero Milestones Found</h4>
-                                                        <p className="text-slate-300 font-bold mt-2">Every vision needs a plan. Add your first step below.</p>
                                                     </div>
-                                                )}
+                                                ))}
+                                                
+                                                {/* Add Node Form */}
+                                                <div className="relative pt-4">
+                                                    <div className="absolute -left-[26px] top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-slate-100 border-[4px] border-white flex items-center justify-center text-slate-400 z-10">
+                                                        <Plus size={12} strokeWidth={4} />
+                                                    </div>
+                                                    <div className="pl-4">
+                                                        <form onSubmit={addMilestone}>
+                                                            <div className="relative flex items-center">
+                                                                <input 
+                                                                    type="text" 
+                                                                    value={milestoneForm.data.title}
+                                                                    onChange={e => milestoneForm.setData('title', e.target.value)}
+                                                                    placeholder="Add next milestone..."
+                                                                    className="w-full bg-white border-2 border-slate-100 rounded-2xl pl-5 pr-14 py-4 text-sm font-bold focus:border-emerald-500 focus:ring-0 transition-all outline-none"
+                                                                />
+                                                                <button 
+                                                                    type="submit" 
+                                                                    disabled={!milestoneForm.data.title.trim() || milestoneForm.processing}
+                                                                    className="absolute right-2 top-2 bottom-2 aspect-square bg-emerald-500 disabled:bg-slate-200 text-white rounded-xl flex items-center justify-center transition-colors shadow-sm hover:bg-emerald-600 active:scale-95"
+                                                                >
+                                                                    <Plus size={20} strokeWidth={3} />
+                                                                </button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-
-                                    {/* Action Area */}
-                                    <div className="mt-auto">
-                                        <form onSubmit={addMilestone} className="relative group">
-                                            <div className="absolute -inset-1 bg-gradient-to-r from-emerald-400 to-emerald-600 rounded-[2rem] blur opacity-0 group-focus-within:opacity-20 transition duration-500"></div>
-                                            <input 
-                                                type="text" 
-                                                value={milestoneForm.data.title}
-                                                onChange={e => milestoneForm.setData('title', e.target.value)}
-                                                placeholder="What's the next critical milestone?"
-                                                className="relative w-full bg-slate-100/50 border-2 border-white rounded-[2rem] py-8 px-10 text-xl font-black text-slate-800 placeholder:text-slate-300 focus:bg-white focus:shadow-2xl transition-all outline-none"
-                                            />
-                                            <button 
-                                                type="submit"
-                                                disabled={milestoneForm.processing || !milestoneForm.data.title.trim()}
-                                                className="absolute right-4 top-4 bottom-4 px-10 bg-slate-900 text-white rounded-[1.5rem] font-black text-xs uppercase tracking-widest hover:bg-emerald-500 transition-all disabled:opacity-0 shadow-lg shadow-slate-200"
-                                            >
-                                                Add Step
-                                            </button>
-                                        </form>
-                                    </div>
                                 </motion.div>
-                            ) : (
-                                <div className="h-full flex flex-col items-center justify-center p-20 text-center bg-white/40 rounded-[4rem] border-2 border-dashed border-slate-200">
-                                    <Compass size={80} className="text-slate-200 mb-8 animate-bounce" />
-                                    <h2 className="text-5xl font-black text-slate-300 tracking-tighter">Draft Your Mission.</h2>
-                                    <p className="mt-4 text-slate-400 font-bold max-w-sm mx-auto">Select a vision from the sidebar to view its blueprint or create a new one to get started.</p>
-                                </div>
                             )}
                         </AnimatePresence>
-                    </div>
-                </div>
+                    </>
+                )}
             </div>
 
             {/* Vision Modal */}
@@ -344,11 +396,16 @@ export default function Index({ goals, categories, priorities }) {
                             initial={{ scale: 0.9, opacity: 0, y: 20 }}
                             animate={{ scale: 1, opacity: 1, y: 0 }}
                             exit={{ scale: 0.9, opacity: 0, y: 20 }}
-                            className="relative w-full max-w-lg bg-white rounded-[3.5rem] p-10 border-4 border-white shadow-2xl"
+                            className="relative w-full max-w-lg bg-white rounded-[3.5rem] p-10 border-4 border-white shadow-2xl max-h-[90vh] overflow-y-auto"
                         >
-                            <h2 className="text-3xl font-black text-slate-900 tracking-tighter mb-8">
-                                {showEditGoalModal ? 'Refine Vision' : 'New Vision'}<span className="text-emerald-500">.</span>
-                            </h2>
+                            <div className="flex justify-between items-start mb-8">
+                                <h2 className="text-3xl font-black text-slate-900 tracking-tighter">
+                                    {showEditGoalModal ? 'Refine Vision' : 'New Vision'}<span className="text-emerald-500">.</span>
+                                </h2>
+                                <button onClick={() => { setShowGoalModal(false); setShowEditGoalModal(false); }} type="button" className="w-10 h-10 bg-slate-50 hover:bg-rose-50 text-slate-400 hover:text-rose-500 rounded-xl flex items-center justify-center transition-all group shadow-sm shrink-0">
+                                    <svg className="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3"><path d="M6 18L18 6M6 6l12 12"/></svg>
+                                </button>
+                            </div>
 
                             <form onSubmit={showEditGoalModal ? submitEditGoal : submitCreateGoal} className="space-y-6">
                                 <div className="space-y-1">
@@ -407,18 +464,9 @@ export default function Index({ goals, categories, priorities }) {
                                 </div>
 
                                 <div className="pt-2 flex space-x-4">
-                                    <button type="submit" className="flex-1 bg-slate-900 text-white py-5 rounded-2xl font-black uppercase tracking-widest hover:bg-emerald-500 transition-all shadow-xl shadow-slate-200 active:scale-95">
+                                    <button type="submit" className="w-full bg-slate-900 text-white py-5 rounded-2xl font-black uppercase tracking-widest hover:bg-emerald-500 transition-all shadow-xl shadow-slate-200 active:scale-95">
                                         {showEditGoalModal ? 'Refine Blueprint' : 'Launch Vision'}
                                     </button>
-                                    {showEditGoalModal && (
-                                        <button 
-                                            type="button" 
-                                            onClick={() => deleteGoal(selectedGoal)} 
-                                            className="w-16 bg-rose-50 text-rose-500 flex items-center justify-center rounded-2xl hover:bg-rose-500 hover:text-white transition-all border-2 border-white shadow-xl shadow-rose-100 active:scale-95"
-                                        >
-                                            <Trash2 size={20} />
-                                        </button>
-                                    )}
                                 </div>
                             </form>
                         </motion.div>

@@ -3,6 +3,8 @@ import { Link, usePage, router } from '@inertiajs/react';
 import CommandPalette from '@/Components/CommandPalette';
 import { LayoutDashboard, ListTodo, Flame, Trophy, User, LogOut, Settings } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import FocusTimerModal from '@/Components/FocusTimerModal';
+import { useFocusTimer } from '@/Contexts/FocusTimerContext';
 
 export default function AuthenticatedLayout({ children }) {
     const { auth, flash, errors } = usePage().props;
@@ -15,6 +17,15 @@ export default function AuthenticatedLayout({ children }) {
     });
     const [userMenu, setUserMenu] = useState(false);
     const [mobileMenu, setMobileMenu] = useState(false);
+    
+    const { activeTask, isMinimized, timeRemaining, toggleMinimize } = useFocusTimer();
+
+    const formatTime = (ms) => {
+        const totalSeconds = Math.ceil(ms / 1000);
+        const minutes = Math.floor(totalSeconds / 60);
+        const seconds = totalSeconds % 60;
+        return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    };
     
     // Toast state
     const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
@@ -320,7 +331,18 @@ export default function AuthenticatedLayout({ children }) {
                 </div>
             </nav>
 
-            <div className="flex-1 flex flex-col min-h-0 w-full">
+            <div className="flex-1 flex flex-col min-h-0 w-full relative">
+                {activeTask && isMinimized && (
+                    <div className="absolute top-4 right-4 md:top-8 md:right-8 z-50">
+                        <button 
+                            onClick={toggleMinimize}
+                            className="flex items-center space-x-2 bg-slate-900 text-emerald-400 px-4 py-2 rounded-2xl font-mono font-bold shadow-2xl border border-emerald-500/30 hover:scale-105 active:scale-95 transition-all"
+                        >
+                            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                            <span>{formatTime(timeRemaining)}</span>
+                        </button>
+                    </div>
+                )}
                 <main className="flex-1 overflow-y-auto p-4 md:p-8 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-32">
                     {children}
                 </main>
@@ -369,6 +391,8 @@ export default function AuthenticatedLayout({ children }) {
                     </div>
                 </div>
             )}
+            
+            <FocusTimerModal />
         </div>
     );
 }

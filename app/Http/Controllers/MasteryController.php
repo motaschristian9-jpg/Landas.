@@ -15,7 +15,7 @@ class MasteryController extends Controller
             'goals' => Goal::with(['category', 'priority', 'milestones'])
                 ->where('user_id', auth()->id())
                 ->orderBy('target_date', 'asc')
-                ->get(),
+                ->paginate(5),
             'categories' => \App\Models\Category::all(),
             'priorities' => \App\Models\Priority::all(),
         ]);

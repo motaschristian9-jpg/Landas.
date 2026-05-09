@@ -15,8 +15,10 @@ class HabitService
      */
     public function calculateStreak(Habit $habit)
     {
-        $scheduledDays = $habit->scheduled_days; // e.g. ['mon', 'wed']
-        $logs = $habit->logs()->orderBy('logged_at', 'desc')->pluck('logged_at')->toArray();
+        $scheduledDays = $habit->scheduled_days ?? []; // e.g. ['monday', 'wednesday']
+        $logs = $habit->logs()->orderBy('logged_at', 'desc')->pluck('logged_at')->map(function ($date) {
+            return $date instanceof \Carbon\Carbon ? $date->toDateString() : \Carbon\Carbon::parse($date)->toDateString();
+        })->toArray();
         
         if (empty($logs)) {
             return 0;
@@ -36,10 +38,12 @@ class HabitService
             $dayName = strtolower($currentDate->format('l'));
             $dateString = $currentDate->toDateString();
 
-            if (in_array($dayName, $scheduledDays)) {
-                if (in_array($dateString, $logs)) {
-                    $streak++;
-                } else {
+            if (in_array($dateString, $logs)) {
+                // Completed! Always increment streak, whether scheduled or not (bonus day)
+                $streak++;
+            } else {
+                // Not completed. Break streak ONLY if it was scheduled.
+                if (in_array($dayName, $scheduledDays)) {
                     // Missed a scheduled day - streak broken
                     break;
                 }
@@ -74,7 +78,9 @@ class HabitService
     public function getCompletionMap(Habit $habit, $days = 30)
     {
         $map = [];
-        $logs = $habit->logs()->where('logged_at', '>=', Carbon::today()->subDays($days))->pluck('logged_at')->toArray();
+        $logs = $habit->logs()->where('logged_at', '>=', Carbon::today()->subDays($days))->pluck('logged_at')->map(function ($date) {
+            return $date instanceof \Carbon\Carbon ? $date->toDateString() : \Carbon\Carbon::parse($date)->toDateString();
+        })->toArray();
         $scheduledDays = $habit->scheduled_days ?? [];
 
         for ($i = 0; $i < $days; $i++) {
@@ -116,7 +122,9 @@ class HabitService
         // Find the last missed scheduled day
         $lastMissedDate = null;
         $currentDate = Carbon::today()->subDay();
-        $logs = $habit->logs()->pluck('logged_at')->toArray();
+        $logs = $habit->logs()->pluck('logged_at')->map(function ($date) {
+            return $date instanceof \Carbon\Carbon ? $date->toDateString() : \Carbon\Carbon::parse($date)->toDateString();
+        })->toArray();
         $scheduledDays = $habit->scheduled_days ?? [];
 
         for ($i = 0; $i < 30; $i++) {

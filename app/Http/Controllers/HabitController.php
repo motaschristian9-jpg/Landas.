@@ -23,7 +23,7 @@ class HabitController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $habits = $user->habits()->with('logs')->get()->map(function ($habit) {
+        $habits = $user->habits()->with('logs')->paginate(10, ['*'], 'habits_page')->through(function ($habit) {
             return [
                 'id' => $habit->id,
                 'title' => $habit->title,

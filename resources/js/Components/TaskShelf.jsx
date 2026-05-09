@@ -1,12 +1,14 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useForm, router } from '@inertiajs/react';
-import { CheckCircle2, Circle, Clock, ChevronRight, Zap, Star, Trash2 } from 'lucide-react';
+import { CheckCircle2, Circle, Clock, ChevronRight, Zap, Star, Trash2, Play } from 'lucide-react';
 import ConfirmationModal from '@/Components/ConfirmationModal';
+import { useFocusTimer } from '@/Contexts/FocusTimerContext';
 
-export default function TaskShelf({ todos }) {
+export default function TaskShelf({ todos, nextUrl, onLoadMore }) {
     const { put, processing } = useForm();
     const [todoToDelete, setTodoToDelete] = React.useState(null);
+    const { startTimer, activeTask } = useFocusTimer();
 
     const handleToggle = (todoId) => {
         put(route('todos.update', todoId), {
@@ -32,7 +34,7 @@ export default function TaskShelf({ todos }) {
         if (a.is_completed !== b.is_completed) return a.is_completed ? 1 : -1;
         const priorityOrder = { high: 0, medium: 1, low: 2 };
         return priorityOrder[a.priority || 'medium'] - priorityOrder[b.priority || 'medium'];
-    }).slice(0, 2); 
+    }); 
 
     const activeCount = todos.filter(t => !t.is_completed).length;
 
@@ -105,6 +107,21 @@ export default function TaskShelf({ todos }) {
                                         <Star size={16} className="text-amber-400 fill-current opacity-0 group-hover:opacity-100 transition-opacity" />
                                     )}
                                     <button 
+                                        disabled={!!activeTask}
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            startTimer(todo);
+                                        }}
+                                        className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all transform hover:scale-110 ${
+                                            activeTask 
+                                            ? 'bg-slate-100 text-slate-300 cursor-not-allowed opacity-50' 
+                                            : 'bg-emerald-50 text-emerald-500 opacity-0 group-hover:opacity-100 hover:bg-emerald-500 hover:text-white'
+                                        }`}
+                                        title={activeTask ? "Another timer is running" : "Focus Mode"}
+                                    >
+                                        <Play size={16} className="fill-current" />
+                                    </button>
+                                    <button 
                                         onClick={(e) => {
                                             e.stopPropagation();
                                             handleDelete(todo);
@@ -125,13 +142,13 @@ export default function TaskShelf({ todos }) {
                     </div>
                 )}
 
-                {todos.length > 5 && (
-                    <Link 
-                        href={route('todos.index')}
-                        className="w-full py-4 flex items-center justify-center text-[10px] font-black text-slate-400 uppercase tracking-widest hover:text-slate-600 transition-colors"
+                {nextUrl && (
+                    <button 
+                        onClick={onLoadMore}
+                        className="w-full py-4 flex items-center justify-center text-[10px] font-black text-slate-400 uppercase tracking-widest hover:text-emerald-500 hover:bg-emerald-50 rounded-2xl transition-all"
                     >
-                        + {todos.length - 5} more actions
-                    </Link>
+                        Load More Tasks
+                    </button>
                 )}
             </div>
             {/* Deletion Confirmation */}

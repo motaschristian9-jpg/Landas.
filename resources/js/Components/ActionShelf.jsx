@@ -12,6 +12,14 @@ export default function ActionShelf({ habits, heartsCount }) {
         });
     };
 
+    const dueHabits = habits.filter(h => h.is_due);
+    const sortedDueHabits = [...dueHabits].sort((a, b) => {
+        if (a.is_completed === b.is_completed) return 0;
+        return a.is_completed ? 1 : -1;
+    });
+    const displayHabits = sortedDueHabits.slice(0, 2);
+    const restHabits = habits.filter(h => !h.is_due);
+
     return (
         <div className="space-y-6">
             <div className="flex items-center justify-between">
@@ -29,7 +37,7 @@ export default function ActionShelf({ habits, heartsCount }) {
             </div>
 
             <div className="grid grid-cols-1 gap-6">
-                {habits.filter(h => h.is_due).map((habit) => (
+                {displayHabits.map((habit) => (
                     <HabitCard 
                         key={habit.id} 
                         habit={habit} 
@@ -42,7 +50,7 @@ export default function ActionShelf({ habits, heartsCount }) {
                 <div className="mt-4 pt-4 border-t border-slate-100">
 
                     <div className="flex flex-wrap gap-2">
-                        {habits.filter(h => !h.is_due).map(habit => (
+                        {restHabits.map(habit => (
                             <div key={habit.id} className="bg-slate-50 text-slate-400 px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest border border-slate-100">
                                 {habit.title}
                             </div>
@@ -55,6 +63,8 @@ export default function ActionShelf({ habits, heartsCount }) {
                         <p className="text-slate-300 font-bold italic text-sm">No habits active.</p>
                     </div>
                 )}
+
+
             </div>
         </div>
     );

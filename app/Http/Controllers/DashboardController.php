@@ -30,40 +30,36 @@ class DashboardController extends Controller
         // 2. Pillar 1: Today's Tasks (Fresh Start Logic)
         $todayTodos = $user->todos()
             ->where(function($query) {
-                // Show incomplete tasks (Due today, Overdue, or Floating)
+                // Show incomplete tasks or those completed today
                 $query->where('is_completed', false)
-                      ->where(function($q) {
-                          $q->whereDate('due_date', '<=', Carbon::today())
-                            ->orWhereNull('due_date');
-                      })
-                      // OR Show tasks completed TODAY
                       ->orWhere(function($q) {
                           $q->where('is_completed', true)
                             ->whereDate('completed_at', Carbon::today());
                       });
             })
             ->orderBy('is_completed', 'asc')
+            ->orderByRaw("CASE WHEN priority = 'high' THEN 1 WHEN priority = 'medium' THEN 2 WHEN priority = 'low' THEN 3 ELSE 4 END")
             ->orderBy('due_date', 'asc')
-            ->get();
+            ->paginate(5, ['*'], 'todos_page');
 
         // 3. Pillar 2: Today's Habits
-        $habits = $user->habits->map(function($habit) use ($habitService) {
-            $isDue = $habitService->isDueToday($habit);
-            $isCompleted = $habit->logs()->whereDate('logged_at', Carbon::today())->exists();
-
-            return [
-                'id' => $habit->id,
-                'title' => $habit->title,
-                'is_due' => $isDue,
-                'is_completed' => $isCompleted,
-                'streak' => $habitService->calculateStreak($habit),
-                'total_logs' => $habit->logs()->count(),
-                'frequency' => $habit->frequency,
-            ];
-        });
+        $allHabits = $user->habits()->get();
+        $habits = [
+            'data' => $allHabits->map(function($habit) use ($habitService) {
+                return [
+                    'id' => $habit->id,
+                    'title' => $habit->title,
+                    'is_due' => $habitService->isDueToday($habit),
+                    'is_completed' => $habitService->isCompletedToday($habit),
+                    'streak' => $habitService->calculateStreak($habit),
+                    'total_logs' => $habit->logs()->count(),
+                    'frequency' => $habit->frequency,
+                ];
+            })->all()
+        ];
 
         // 4. Pillar 3: Goal Progress
-        $goals = $user->goals->map(function($goal) use ($goalService) {
+        $goals = $user->goals()->with('milestones')->paginate(3, ['*'], 'goals_page')->through(function($goal) use ($goalService) {
             return [
                 'id' => $goal->id,
                 'title' => $goal->title,

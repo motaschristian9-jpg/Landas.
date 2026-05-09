@@ -1,22 +1,24 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, useForm, router } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
     Plus, CheckCircle2, Circle, Clock, Trash2, 
     Zap, Sun, Sunset, Moon, MoreVertical, 
-    ArrowRight, Star, Target, Timer
+    ArrowRight, Star, Target, Timer, Play
 } from 'lucide-react';
 import ConfirmationModal from '@/Components/ConfirmationModal';
+import { useFocusTimer } from '@/Contexts/FocusTimerContext';
 
 export default function Index({ todos, showingHistory }) {
+    const [localTodos, setLocalTodos] = useState(todos?.data || []);
     const [showModal, setShowModal] = useState(false);
     const [filter, setFilter] = useState('all'); // all, active, completed
     const [todoToDelete, setTodoToDelete] = useState(null);
+    const { startTimer, activeTask } = useFocusTimer();
 
     const { data, setData, post, processing, reset } = useForm({
         title: '',
-        due_date: '',
         priority: 'medium',
         time_slot: 'morning',
         estimated_minutes: 30,
@@ -51,6 +53,17 @@ export default function Index({ todos, showingHistory }) {
         setTodoToDelete(todo);
     };
 
+    useEffect(() => {
+        if (todos?.current_page > 1) {
+            setLocalTodos(prev => {
+                const newItems = todos.data.filter(item => !prev.some(p => p.id === item.id));
+                return [...prev, ...newItems];
+            });
+        } else {
+            setLocalTodos(todos?.data || []);
+        }
+    }, [todos]);
+
     const confirmDelete = () => {
         if (todoToDelete) {
             router.delete(route('todos.destroy', todoToDelete.id), {
@@ -60,9 +73,18 @@ export default function Index({ todos, showingHistory }) {
         }
     };
 
-    const ongoingTasks = todos.filter(t => !t.is_completed);
-    const completedTasks = todos.filter(t => t.is_completed);
-    const filteredTodos = filter === 'all' ? todos : (filter === 'active' ? ongoingTasks : completedTasks);
+    const loadMore = () => {
+        if (!todos?.next_page_url) return;
+        router.visit(todos.next_page_url, {
+            only: ['todos'],
+            preserveState: true,
+            preserveScroll: true,
+        });
+    };
+
+    const ongoingTasks = localTodos.filter(t => !t.is_completed);
+    const completedTasks = localTodos.filter(t => t.is_completed);
+    const filteredTodos = filter === 'all' ? localTodos : (filter === 'active' ? ongoingTasks : completedTasks);
     
     // Feature: Focus Hero (First high priority active task)
     const focusTask = ongoingTasks.find(t => t.priority === 'high') || ongoingTasks[0];
@@ -149,12 +171,26 @@ export default function Index({ todos, showingHistory }) {
                                                 <span className="capitalize">{focusTask.priority}</span>
                                             </div>
                                         </div>
-                                        <button 
-                                            onClick={() => toggleTodo(focusTask)}
-                                            className="w-full bg-white text-slate-900 py-4 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-emerald-500 hover:text-white transition-all shadow-xl shadow-black/20"
-                                        >
-                                            Complete Now
-                                        </button>
+                                        <div className="flex flex-col space-y-3">
+                                            <button 
+                                                onClick={() => toggleTodo(focusTask)}
+                                                className="w-full bg-white text-slate-900 py-4 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-emerald-500 hover:text-white transition-all shadow-xl shadow-black/20"
+                                            >
+                                                Complete Now
+                                            </button>
+                                            <button 
+                                                disabled={!!activeTask}
+                                                onClick={() => startTimer(focusTask)}
+                                                className={`w-full py-4 rounded-2xl font-black text-xs uppercase tracking-widest transition-all flex items-center justify-center space-x-2 ${
+                                                    activeTask 
+                                                    ? 'bg-slate-800 text-slate-600 cursor-not-allowed' 
+                                                    : 'bg-emerald-500 text-white hover:bg-emerald-400 shadow-xl shadow-emerald-500/20'
+                                                }`}
+                                            >
+                                                <Play size={14} className="fill-current" />
+                                                <span>{activeTask ? 'Timer Running' : 'Start Focus Timer'}</span>
+                                            </button>
+                                        </div>
                                     </>
                                 ) : (
                                     <div className="py-10 text-center">
@@ -180,13 +216,13 @@ export default function Index({ todos, showingHistory }) {
                                         strokeWidth="20"
                                         strokeLinecap="round"
                                         initial={{ strokeDasharray: "440", strokeDashoffset: "440" }}
-                                        animate={{ strokeDashoffset: 440 - (440 * (completedTasks.length / (todos.length || 1))) }}
+                                        animate={{ strokeDashoffset: 440 - (440 * (completedTasks.length / (localTodos.length || 1))) }}
                                         transition={{ duration: 1.5, ease: "easeOut" }}
                                     />
                                 </svg>
                                 <div className="absolute flex flex-col items-center">
                                     <span className="text-4xl font-black text-slate-900 tracking-tighter">
-                                        {Math.round((completedTasks.length / (todos.length || 1)) * 100)}%
+                                        {Math.round((completedTasks.length / (localTodos.length || 1)) * 100)}%
                                     </span>
                                     <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Mastered</span>
                                 </div>
@@ -270,12 +306,40 @@ export default function Index({ todos, showingHistory }) {
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <button 
-                                                            onClick={(e) => { e.stopPropagation(); deleteTodo(todo); }}
-                                                            className="opacity-0 group-hover:opacity-100 w-10 h-10 rounded-xl bg-rose-50 text-rose-500 flex items-center justify-center transition-all hover:bg-rose-500 hover:text-white"
-                                                        >
-                                                            <Trash2 size={18} />
-                                                        </button>
+                                                        
+                                                        {!todo.is_completed && (
+                                                            <div className="flex items-center space-x-2">
+                                                                <button 
+                                                                    disabled={!!activeTask}
+                                                                    onClick={(e) => {
+                                                                        e.stopPropagation();
+                                                                        startTimer(todo);
+                                                                    }}
+                                                                    className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${
+                                                                        activeTask 
+                                                                        ? 'bg-slate-100 text-slate-300 cursor-not-allowed' 
+                                                                        : 'opacity-0 group-hover:opacity-100 bg-emerald-50 text-emerald-500 hover:bg-emerald-500 hover:text-white'
+                                                                    }`}
+                                                                    title={activeTask ? "Another timer is running" : "Focus Mode"}
+                                                                >
+                                                                    <Play size={18} className="fill-current" />
+                                                                </button>
+                                                                <button 
+                                                                    onClick={(e) => { e.stopPropagation(); deleteTodo(todo); }}
+                                                                    className="opacity-0 group-hover:opacity-100 w-10 h-10 rounded-xl bg-rose-50 text-rose-500 flex items-center justify-center transition-all hover:bg-rose-500 hover:text-white"
+                                                                >
+                                                                    <Trash2 size={18} />
+                                                                </button>
+                                                            </div>
+                                                        )}
+                                                        {todo.is_completed && (
+                                                            <button 
+                                                                onClick={(e) => { e.stopPropagation(); deleteTodo(todo); }}
+                                                                className="opacity-0 group-hover:opacity-100 w-10 h-10 rounded-xl bg-rose-50 text-rose-500 flex items-center justify-center transition-all hover:bg-rose-500 hover:text-white"
+                                                            >
+                                                                <Trash2 size={18} />
+                                                            </button>
+                                                        )}
                                                     </motion.div>
                                                 ))}
                                             </AnimatePresence>
@@ -289,6 +353,16 @@ export default function Index({ todos, showingHistory }) {
                                     </div>
                                 );
                             })}
+
+                            {todos?.next_page_url && (
+                                <button 
+                                    onClick={loadMore}
+                                    className="w-full py-6 flex items-center justify-center space-x-2 bg-slate-50 border-2 border-dashed border-slate-200 rounded-[2.5rem] text-[10px] font-black text-slate-400 uppercase tracking-widest hover:text-emerald-500 hover:border-emerald-200 hover:bg-emerald-50 transition-all active:scale-95"
+                                >
+                                    <ArrowRight size={16} />
+                                    <span>Load More Sprint Actions</span>
+                                </button>
+                            )}
                         </div>
                     </div>
                 </div>
@@ -303,7 +377,12 @@ export default function Index({ todos, showingHistory }) {
                         animate={{ scale: 1, opacity: 1 }}
                         className="relative w-full max-w-lg bg-white rounded-[3.5rem] p-10 border-4 border-white shadow-2xl"
                     >
-                        <h2 className="text-3xl font-black text-slate-900 tracking-tighter mb-8">Next Action<span className="text-emerald-500">.</span></h2>
+                        <div className="flex justify-between items-start mb-8">
+                            <h2 className="text-3xl font-black text-slate-900 tracking-tighter">Next Action<span className="text-emerald-500">.</span></h2>
+                            <button onClick={() => setShowModal(false)} type="button" className="w-10 h-10 bg-slate-50 hover:bg-rose-50 text-slate-400 hover:text-rose-500 rounded-xl flex items-center justify-center transition-all group shadow-sm shrink-0">
+                                <svg className="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3"><path d="M6 18L18 6M6 6l12 12"/></svg>
+                            </button>
+                        </div>
                         
                         <form onSubmit={submit} className="space-y-6">
                             <div>
@@ -360,25 +439,14 @@ export default function Index({ todos, showingHistory }) {
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-2 gap-6">
-                                <div>
-                                    <label className="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2 ml-1">Estim. Minutes</label>
-                                    <input 
-                                        type="number" 
-                                        value={data.estimated_minutes}
-                                        onChange={e => setData('estimated_minutes', e.target.value)}
-                                        className="w-full px-6 py-4 rounded-2xl border-2 border-slate-100 font-bold outline-none focus:border-emerald-500 transition-all"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2 ml-1">Deadline</label>
-                                    <input 
-                                        type="date" 
-                                        value={data.due_date}
-                                        onChange={e => setData('due_date', e.target.value)}
-                                        className="w-full px-6 py-4 rounded-2xl border-2 border-slate-100 font-bold outline-none focus:border-emerald-500 transition-all"
-                                    />
-                                </div>
+                            <div className="w-full">
+                                <label className="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2 ml-1">Estim. Minutes</label>
+                                <input 
+                                    type="number" 
+                                    value={data.estimated_minutes}
+                                    onChange={e => setData('estimated_minutes', e.target.value)}
+                                    className="w-full px-6 py-4 rounded-2xl border-2 border-slate-100 font-bold outline-none focus:border-emerald-500 transition-all"
+                                />
                             </div>
 
                             <button 

@@ -27,7 +27,12 @@ class TodoController extends Controller
                   ->whereDate('completed_at', '<', \Carbon\Carbon::today());
         }
 
-        $todos = $query->latest()->get();
+        $query->orderBy('is_completed', 'asc')
+              ->orderByRaw("CASE WHEN priority = 'high' THEN 1 WHEN priority = 'medium' THEN 2 WHEN priority = 'low' THEN 3 ELSE 4 END")
+              ->orderBy('due_date', 'asc')
+              ->orderBy('created_at', 'desc');
+
+        $todos = $query->paginate(10, ['*'], 'todos_page');
         $goals = Auth::user()->goals()->where('status', '!=', 'completed')->get();
         
         return \Inertia\Inertia::render('Todos/Index', [
