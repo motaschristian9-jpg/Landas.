@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, useForm, router } from "@inertiajs/react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -27,6 +27,8 @@ export default function Index({ todos, showingHistory }) {
     const [showModal, setShowModal] = useState(false);
     const [filter, setFilter] = useState("all"); // all, active, completed
     const [todoToDelete, setTodoToDelete] = useState(null);
+    const [dateToDelete, setDateToDelete] = useState(null);
+    const [expandedDates, setExpandedDates] = useState({});
     const { startTimer, activeTask } = useFocusTimer();
 
     const { data, setData, post, processing, reset } = useForm({
@@ -92,6 +94,12 @@ export default function Index({ todos, showingHistory }) {
                 preserveScroll: true,
                 onSuccess: () => setTodoToDelete(null),
             });
+        } else if (dateToDelete) {
+            router.delete(route("todos.destroyByDate"), {
+                data: { date: dateToDelete },
+                preserveScroll: true,
+                onSuccess: () => setDateToDelete(null),
+            });
         }
     };
 
@@ -138,9 +146,37 @@ export default function Index({ todos, showingHistory }) {
         },
     ];
 
+    // History Grouping Logic
+    const groupedByDate = localTodos.reduce((groups, todo) => {
+        const dateStr = new Date(todo.created_at).toLocaleDateString("en-US", {
+            weekday: "long",
+            month: "long",
+            day: "numeric",
+            year: "numeric",
+        });
+        if (!groups[dateStr]) {
+            groups[dateStr] = [];
+        }
+        groups[dateStr].push(todo);
+        return groups;
+    }, {});
+
+    const sortedDates = Object.keys(groupedByDate).sort(
+        (a, b) => new Date(b) - new Date(a),
+    );
+
+    const toggleDateExpansion = (date) => {
+        setExpandedDates((prev) => ({
+            ...prev,
+            [date]: !prev[date],
+        }));
+    };
+
     return (
         <AuthenticatedLayout>
-            <Head title={showingHistory ? "Mastery History" : "Daily Tasks"} />
+            <>
+                <Head title={showingHistory ? "Mastery History" : "Daily Tasks"} />
+                <div className="min-h-screen">
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-24">
                 {/* Header Section */}
@@ -204,10 +240,11 @@ export default function Index({ todos, showingHistory }) {
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
-                    {/* Left Side: Focus & Stats */}
-                    <div className="lg:col-span-4 space-y-8">
+                    {/* Left Side: Stats & Focus - Hidden in History */}
+                    {!showingHistory && (
+                        <div className="lg:col-span-4 flex flex-col items-center">
                         {/* Focus Hero */}
-                        <div className="bg-slate-900 rounded-[3rem] p-8 text-white relative overflow-hidden shadow-2xl shadow-slate-200">
+                        <div className="bg-slate-900 rounded-[3rem] p-8 text-white relative overflow-hidden shadow-2xl shadow-slate-200 w-full">
                             <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/20 rounded-full blur-3xl -translate-y-16 translate-x-16"></div>
 
                             <div className="relative z-10">
@@ -288,8 +325,8 @@ export default function Index({ todos, showingHistory }) {
                             </div>
                         </div>
 
-                        {/* Energy Progress */}
-                        <div className="bg-white rounded-[3rem] p-8 border-2 border-slate-50 shadow-xl shadow-slate-100/50">
+                        {/* Momentum Chart */}
+                        <div className="bg-white rounded-[3rem] p-8 border-2 border-slate-50 shadow-xl shadow-slate-100/50 mt-8 w-full">
                             <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-6">
                                 Daily Momentum
                             </h3>
@@ -343,185 +380,424 @@ export default function Index({ todos, showingHistory }) {
                             </div>
                         </div>
                     </div>
+                )}
 
                     {/* Right Side: Timeline/List */}
-                    <div className="lg:col-span-8 flex flex-col">
-                        {/* Filters */}
-                        <div className="flex items-center space-x-2 mb-8 bg-slate-50 p-2 rounded-[2rem] self-start">
-                            {["all", "active", "completed"].map((f) => (
-                                <button
-                                    key={f}
-                                    onClick={() => setFilter(f)}
-                                    className={`px-6 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${
-                                        filter === f
-                                            ? "bg-white text-slate-900 shadow-md"
-                                            : "text-slate-400 hover:text-slate-600"
-                                    }`}
-                                >
-                                    {f}
-                                </button>
-                            ))}
-                        </div>
-
-                        {/* Grouped Tasks */}
-                        <div className="space-y-12">
-                            {slots.map((slot) => {
-                                const slotTasks = filteredTodos.filter(
-                                    (t) =>
-                                        t.time_slot === slot.id ||
-                                        (!t.time_slot && slot.id === "morning"),
-                                );
-                                if (slotTasks.length === 0 && filter !== "all")
-                                    return null;
-
-                                return (
-                                    <div
-                                        key={slot.id}
-                                        className="relative pl-12"
+                    <div
+                        className={`${showingHistory ? "lg:col-span-12" : "lg:col-span-8"} flex flex-col`}
+                    >
+                        {/* Filters - Hidden in History */}
+                        {!showingHistory && (
+                            <div className="flex items-center space-x-2 mb-8 bg-slate-50 p-2 rounded-[2rem] self-start">
+                                {["all", "active", "completed"].map((f) => (
+                                    <button
+                                        key={f}
+                                        onClick={() => setFilter(f)}
+                                        className={`px-6 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${
+                                            filter === f
+                                                ? "bg-white text-slate-900 shadow-md"
+                                                : "text-slate-400 hover:text-slate-600"
+                                        }`}
                                     >
-                                        {/* Timeline line */}
-                                        <div className="absolute left-6 top-0 bottom-0 w-1 bg-slate-50 rounded-full"></div>
+                                        {f}
+                                    </button>
+                                ))}
+                            </div>
+                        )}
 
-                                        <div className="absolute left-0 top-0 w-12 h-12 rounded-2xl bg-white border-2 border-slate-50 flex items-center justify-center shadow-sm z-10">
-                                            <div className={slot.color}>
-                                                {slot.icon}
-                                            </div>
-                                        </div>
+                        {/* Grouped Tasks / History Table */}
+                        <div className="space-y-12">
+                            {showingHistory ? (
+                                <div className="space-y-4">
+                                    <div className="overflow-hidden bg-white/40 backdrop-blur-xl rounded-[2.5rem] border-2 border-slate-100 shadow-sm">
+                                        <table className="w-full text-left border-collapse">
+                                            <thead>
+                                                <tr className="border-b border-slate-50">
+                                                    <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest w-24">
+                                                        Log
+                                                    </th>
+                                                    <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                                                        Mastery Date
+                                                    </th>
+                                                    <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest w-32">
+                                                        Task Count
+                                                    </th>
+                                                    <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest w-32">
+                                                        Success Rate
+                                                    </th>
+                                                    <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest w-32 text-right">
+                                                        Actions
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody className="divide-y divide-slate-50">
+                                                {sortedDates.map((date) => {
+                                                    const tasks =
+                                                        groupedByDate[date];
+                                                    const completedCount =
+                                                        tasks.filter(
+                                                            (t) =>
+                                                                t.is_completed,
+                                                        ).length;
+                                                    const rate = Math.round(
+                                                        (completedCount /
+                                                            tasks.length) *
+                                                            100,
+                                                    );
+                                                    const isExpanded =
+                                                        expandedDates[date];
 
-                                        <div className="mb-6 pt-2">
-                                            <h4 className="text-xs font-black text-slate-900 uppercase tracking-[0.2em]">
-                                                {slot.label}
-                                            </h4>
-                                        </div>
-
-                                        <div className="space-y-4">
-                                            <AnimatePresence mode="popLayout">
-                                                {slotTasks.map((todo) => (
-                                                    <motion.div
-                                                        key={todo.id}
-                                                        layout
-                                                        initial={{
-                                                            opacity: 0,
-                                                            x: -20,
-                                                        }}
-                                                        animate={{
-                                                            opacity: 1,
-                                                            x: 0,
-                                                        }}
-                                                        exit={{
-                                                            opacity: 0,
-                                                            x: 20,
-                                                        }}
-                                                        className={`group p-6 rounded-[2.5rem] border-2 transition-all cursor-pointer flex items-center justify-between ${
-                                                            todo.is_completed
-                                                                ? "bg-slate-50 border-slate-50 opacity-60"
-                                                                : "bg-white border-slate-100 hover:border-emerald-200 hover:shadow-2xl hover:shadow-emerald-50/50"
-                                                        }`}
-                                                        onClick={() =>
-                                                            toggleTodo(todo)
-                                                        }
-                                                    >
-                                                        <div className="flex items-center space-x-6">
-                                                            <div
-                                                                className={
-                                                                    todo.is_completed
-                                                                        ? "text-emerald-500"
-                                                                        : "text-slate-200"
+                                                    return (
+                                                        <React.Fragment
+                                                            key={date}
+                                                        >
+                                                            <tr
+                                                                className={`group hover:bg-white transition-all cursor-pointer ${isExpanded ? "bg-slate-50/50" : ""}`}
+                                                                onClick={() =>
+                                                                    toggleDateExpansion(
+                                                                        date,
+                                                                    )
                                                                 }
                                                             >
-                                                                {todo.is_completed ? (
-                                                                    <CheckCircle2
-                                                                        size={
-                                                                            28
-                                                                        }
-                                                                        strokeWidth={
-                                                                            3
-                                                                        }
-                                                                    />
-                                                                ) : (
-                                                                    <Circle
-                                                                        size={
-                                                                            28
-                                                                        }
-                                                                        strokeWidth={
-                                                                            2.5
-                                                                        }
-                                                                    />
-                                                                )}
-                                                            </div>
-                                                            <div>
-                                                                <h4
-                                                                    className={`text-xl font-black tracking-tight ${todo.is_completed ? "line-through text-slate-400" : "text-slate-800"}`}
-                                                                >
-                                                                    {todo.title}
-                                                                </h4>
-                                                                <div className="flex items-center space-x-4 mt-1">
+                                                                <td className="px-8 py-6">
                                                                     <div
-                                                                        className={`text-[10px] font-black uppercase tracking-widest ${
-                                                                            todo.priority ===
-                                                                            "high"
-                                                                                ? "text-rose-500"
-                                                                                : todo.priority ===
-                                                                                    "medium"
-                                                                                  ? "text-amber-500"
-                                                                                  : "text-slate-400"
-                                                                        }`}
+                                                                        className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${rate === 100 ? "bg-emerald-50 text-emerald-500" : "bg-slate-50 text-slate-400"}`}
                                                                     >
-                                                                        {
-                                                                            todo.priority
-                                                                        }{" "}
-                                                                        Priority
-                                                                    </div>
-                                                                    {todo.estimated_minutes > 0 && (
-                                                                        <div className="text-[10px] font-black text-slate-300 uppercase tracking-widest flex items-center">
-                                                                            <Clock
+                                                                        {rate ===
+                                                                        100 ? (
+                                                                            <CheckCircle2
                                                                                 size={
-                                                                                    10
+                                                                                    18
                                                                                 }
-                                                                                className="mr-1"
+                                                                                strokeWidth={
+                                                                                    3
+                                                                                }
                                                                             />
-                                                                            {
-                                                                                todo.estimated_minutes
-                                                                            }
-                                                                            m
+                                                                        ) : (
+                                                                            <Target
+                                                                                size={
+                                                                                    18
+                                                                                }
+                                                                            />
+                                                                        )}
+                                                                    </div>
+                                                                </td>
+                                                                <td className="px-8 py-6">
+                                                                    <span className="font-black text-slate-900 tracking-tight text-lg">
+                                                                        {date}
+                                                                    </span>
+                                                                </td>
+                                                                <td className="px-8 py-6">
+                                                                    <span className="text-xs font-bold text-slate-500">
+                                                                        {
+                                                                            tasks.length
+                                                                        }{" "}
+                                                                        tasks
+                                                                    </span>
+                                                                </td>
+                                                                <td className="px-8 py-6">
+                                                                    <div className="flex items-center space-x-2">
+                                                                        <div className="flex-1 h-1.5 w-12 bg-slate-100 rounded-full overflow-hidden">
+                                                                            <div
+                                                                                className={`h-full rounded-full ${rate === 100 ? "bg-emerald-500" : "bg-amber-400"}`}
+                                                                                style={{
+                                                                                    width: `${rate}%`,
+                                                                                }}
+                                                                            ></div>
                                                                         </div>
+                                                                        <span className="text-[10px] font-black text-slate-400 w-8">
+                                                                            {
+                                                                                rate
+                                                                            }
+                                                                            %
+                                                                        </span>
+                                                                    </div>
+                                                                </td>
+                                                                <td className="px-8 py-6 text-right">
+                                                                    <button
+                                                                        onClick={(e) => {
+                                                                            e.stopPropagation();
+                                                                            setDateToDelete(date);
+                                                                        }}
+                                                                        className="p-3 rounded-xl bg-slate-50 text-slate-400 hover:bg-rose-50 hover:text-rose-500 transition-all active:scale-95 group/del"
+                                                                        title="Clear this day's history"
+                                                                    >
+                                                                        <Trash2 size={16} className="group-hover/del:animate-bounce" />
+                                                                    </button>
+                                                                </td>
+                                                            </tr>
+                                                            {isExpanded && (
+                                                                <tr>
+                                                                    <td
+                                                                        colSpan="5"
+                                                                        className="px-8 py-0 bg-slate-50/30"
+                                                                    >
+                                                                        <div className="py-8 border-t border-slate-100 animate-in slide-in-from-top-2 duration-300">
+                                                                            <table className="w-full text-left border-collapse">
+                                                                                <tbody className="space-y-2">
+                                                                                    {tasks.map(
+                                                                                        (
+                                                                                            todo,
+                                                                                        ) => (
+                                                                                            <tr
+                                                                                                key={
+                                                                                                    todo.id
+                                                                                                }
+                                                                                                className="group/item hover:bg-white/80 transition-all cursor-pointer rounded-2xl"
+                                                                                                onClick={(
+                                                                                                    e,
+                                                                                                ) => {
+                                                                                                    e.stopPropagation();
+                                                                                                    toggleTodo(
+                                                                                                        todo,
+                                                                                                    );
+                                                                                                }}
+                                                                                            >
+                                                                                                <td className="py-3 px-4 w-12">
+                                                                                                    {todo.is_completed ? (
+                                                                                                        <CheckCircle2
+                                                                                                            size={
+                                                                                                                16
+                                                                                                            }
+                                                                                                            className="text-emerald-500"
+                                                                                                        />
+                                                                                                    ) : (
+                                                                                                        <Circle
+                                                                                                            size={
+                                                                                                                16
+                                                                                                            }
+                                                                                                            className="text-slate-200"
+                                                                                                        />
+                                                                                                    )}
+                                                                                                </td>
+                                                                                                <td className="py-3 px-4">
+                                                                                                    <span
+                                                                                                        className={`font-bold text-slate-700 ${todo.is_completed ? "line-through text-slate-400" : ""}`}
+                                                                                                    >
+                                                                                                        {
+                                                                                                            todo.title
+                                                                                                        }
+                                                                                                    </span>
+                                                                                                </td>
+                                                                                                <td className="py-3 px-4 w-32">
+                                                                                                    <span
+                                                                                                        className={`text-[9px] font-black uppercase tracking-widest ${todo.priority === "high" ? "text-rose-500" : todo.priority === "medium" ? "text-amber-500" : "text-slate-400"}`}
+                                                                                                    >
+                                                                                                        {
+                                                                                                            todo.priority
+                                                                                                        }
+                                                                                                    </span>
+                                                                                                </td>
+                                                                                                <td className="py-3 px-4 w-32 text-right">
+                                                                                                    <div className="flex items-center justify-end text-slate-300">
+                                                                                                        <span className="text-[9px] font-black uppercase tracking-widest">
+                                                                                                            {
+                                                                                                                todo.time_slot
+                                                                                                            }
+                                                                                                        </span>
+                                                                                                    </div>
+                                                                                                </td>
+                                                                                            </tr>
+                                                                                        ),
+                                                                                    )}
+                                                                                </tbody>
+                                                                            </table>
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+                                                            )}
+                                                        </React.Fragment>
+                                                    );
+                                                })}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            ) : (
+                                slots.map((slot) => {
+                                    const slotTasks = filteredTodos.filter(
+                                        (t) =>
+                                            t.time_slot === slot.id ||
+                                            (!t.time_slot &&
+                                                slot.id === "morning"),
+                                    );
+                                    if (
+                                        slotTasks.length === 0 &&
+                                        filter !== "all"
+                                    )
+                                        return null;
+
+                                    return (
+                                        <div
+                                            key={slot.id}
+                                            className="relative pl-12"
+                                        >
+                                            {/* Timeline line */}
+                                            <div className="absolute left-6 top-0 bottom-0 w-1 bg-slate-50 rounded-full"></div>
+
+                                            <div className="absolute left-0 top-0 w-12 h-12 rounded-2xl bg-white border-2 border-slate-50 flex items-center justify-center shadow-sm z-10">
+                                                <div className={slot.color}>
+                                                    {slot.icon}
+                                                </div>
+                                            </div>
+
+                                            <div className="mb-6 pt-2">
+                                                <h4 className="text-xs font-black text-slate-900 uppercase tracking-[0.2em]">
+                                                    {slot.label}
+                                                </h4>
+                                            </div>
+
+                                            <div className="space-y-4">
+                                                <AnimatePresence mode="popLayout">
+                                                    {slotTasks.map((todo) => (
+                                                        <motion.div
+                                                            key={todo.id}
+                                                            layout
+                                                            initial={{
+                                                                opacity: 0,
+                                                                x: -20,
+                                                            }}
+                                                            animate={{
+                                                                opacity: 1,
+                                                                x: 0,
+                                                            }}
+                                                            exit={{
+                                                                opacity: 0,
+                                                                x: 20,
+                                                            }}
+                                                            className={`group p-6 rounded-[2.5rem] border-2 transition-all cursor-pointer flex items-center justify-between ${
+                                                                todo.is_completed
+                                                                    ? "bg-slate-50 border-slate-50 opacity-60"
+                                                                    : "bg-white border-slate-100 hover:border-emerald-200 hover:shadow-2xl hover:shadow-emerald-50/50"
+                                                            }`}
+                                                            onClick={() =>
+                                                                toggleTodo(todo)
+                                                            }
+                                                        >
+                                                            <div className="flex items-center space-x-6">
+                                                                <div
+                                                                    className={
+                                                                        todo.is_completed
+                                                                            ? "text-emerald-500"
+                                                                            : "text-slate-200"
+                                                                    }
+                                                                >
+                                                                    {todo.is_completed ? (
+                                                                        <CheckCircle2
+                                                                            size={
+                                                                                28
+                                                                            }
+                                                                            strokeWidth={
+                                                                                3
+                                                                            }
+                                                                        />
+                                                                    ) : (
+                                                                        <Circle
+                                                                            size={
+                                                                                28
+                                                                            }
+                                                                            strokeWidth={
+                                                                                2.5
+                                                                            }
+                                                                        />
                                                                     )}
                                                                 </div>
-                                                            </div>
-                                                        </div>
-
-                                                        {!todo.is_completed && (
-                                                            <div className="flex items-center space-x-2">
-                                                                <button
-                                                                    disabled={
-                                                                        !!activeTask
-                                                                    }
-                                                                    onClick={(
-                                                                        e,
-                                                                    ) => {
-                                                                        e.stopPropagation();
-                                                                        startTimer(
-                                                                            todo,
-                                                                        );
-                                                                    }}
-                                                                    className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${
-                                                                        activeTask
-                                                                            ? "bg-slate-100 text-slate-300 cursor-not-allowed"
-                                                                            : "opacity-0 group-hover:opacity-100 bg-emerald-50 text-emerald-500 hover:bg-emerald-500 hover:text-white"
-                                                                    }`}
-                                                                    title={
-                                                                        activeTask
-                                                                            ? "Another timer is running"
-                                                                            : "Focus Mode"
-                                                                    }
-                                                                >
-                                                                    <Play
-                                                                        size={
-                                                                            18
+                                                                <div>
+                                                                    <h4
+                                                                        className={`text-xl font-black tracking-tight ${todo.is_completed ? "line-through text-slate-400" : "text-slate-800"}`}
+                                                                    >
+                                                                        {
+                                                                            todo.title
                                                                         }
-                                                                        className="fill-current"
-                                                                    />
-                                                                </button>
+                                                                    </h4>
+                                                                    <div className="flex items-center space-x-4 mt-1">
+                                                                        <div
+                                                                            className={`text-[10px] font-black uppercase tracking-widest ${
+                                                                                todo.priority ===
+                                                                                "high"
+                                                                                    ? "text-rose-500"
+                                                                                    : todo.priority ===
+                                                                                        "medium"
+                                                                                      ? "text-amber-500"
+                                                                                      : "text-slate-400"
+                                                                            }`}
+                                                                        >
+                                                                            {
+                                                                                todo.priority
+                                                                            }{" "}
+                                                                            Priority
+                                                                        </div>
+                                                                        {todo.estimated_minutes >
+                                                                            0 && (
+                                                                            <div className="text-[10px] font-black text-slate-300 uppercase tracking-widest flex items-center">
+                                                                                <Clock
+                                                                                    size={
+                                                                                        10
+                                                                                    }
+                                                                                    className="mr-1"
+                                                                                />
+                                                                                {
+                                                                                    todo.estimated_minutes
+                                                                                }
+                                                                                m
+                                                                            </div>
+                                                                        )}
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            {!todo.is_completed && (
+                                                                <div className="flex items-center space-x-2">
+                                                                    <button
+                                                                        disabled={
+                                                                            !!activeTask
+                                                                        }
+                                                                        onClick={(
+                                                                            e,
+                                                                        ) => {
+                                                                            e.stopPropagation();
+                                                                            startTimer(
+                                                                                todo,
+                                                                            );
+                                                                        }}
+                                                                        className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${
+                                                                            activeTask
+                                                                                ? "bg-slate-100 text-slate-300 cursor-not-allowed"
+                                                                                : "opacity-0 group-hover:opacity-100 bg-emerald-50 text-emerald-500 hover:bg-emerald-500 hover:text-white"
+                                                                        }`}
+                                                                        title={
+                                                                            activeTask
+                                                                                ? "Another timer is running"
+                                                                                : "Focus Mode"
+                                                                        }
+                                                                    >
+                                                                        <Play
+                                                                            size={
+                                                                                18
+                                                                            }
+                                                                            className="fill-current"
+                                                                        />
+                                                                    </button>
+                                                                    <button
+                                                                        onClick={(
+                                                                            e,
+                                                                        ) => {
+                                                                            e.stopPropagation();
+                                                                            deleteTodo(
+                                                                                todo,
+                                                                            );
+                                                                        }}
+                                                                        className="opacity-0 group-hover:opacity-100 w-10 h-10 rounded-xl bg-rose-50 text-rose-500 flex items-center justify-center transition-all hover:bg-rose-500 hover:text-white"
+                                                                    >
+                                                                        <Trash2
+                                                                            size={
+                                                                                18
+                                                                            }
+                                                                        />
+                                                                    </button>
+                                                                </div>
+                                                            )}
+                                                            {!!todo.is_completed && (
                                                                 <button
                                                                     onClick={(
                                                                         e,
@@ -534,45 +810,26 @@ export default function Index({ todos, showingHistory }) {
                                                                     className="opacity-0 group-hover:opacity-100 w-10 h-10 rounded-xl bg-rose-50 text-rose-500 flex items-center justify-center transition-all hover:bg-rose-500 hover:text-white"
                                                                 >
                                                                     <Trash2
-                                                                        size={
-                                                                            18
-                                                                        }
+                                                                        size={18}
                                                                     />
                                                                 </button>
-                                                            </div>
-                                                        )}
-                                                        {!!todo.is_completed && (
-                                                            <button
-                                                                onClick={(
-                                                                    e,
-                                                                ) => {
-                                                                    e.stopPropagation();
-                                                                    deleteTodo(
-                                                                        todo,
-                                                                    );
-                                                                }}
-                                                                className="opacity-0 group-hover:opacity-100 w-10 h-10 rounded-xl bg-rose-50 text-rose-500 flex items-center justify-center transition-all hover:bg-rose-500 hover:text-white"
-                                                            >
-                                                                <Trash2
-                                                                    size={18}
-                                                                />
-                                                            </button>
-                                                        )}
-                                                    </motion.div>
-                                                ))}
-                                            </AnimatePresence>
+                                                            )}
+                                                        </motion.div>
+                                                    ))}
+                                                </AnimatePresence>
 
-                                            {slotTasks.length === 0 && (
-                                                <div className="py-8 border-2 border-dashed border-slate-50 rounded-[2.5rem] flex items-center justify-center">
-                                                    <p className="text-[10px] font-black text-slate-200 uppercase tracking-widest">
-                                                        No tasks scheduled
-                                                    </p>
-                                                </div>
-                                            )}
+                                                {slotTasks.length === 0 && (
+                                                    <div className="py-8 border-2 border-dashed border-slate-50 rounded-[2.5rem] flex items-center justify-center">
+                                                        <p className="text-[10px] font-black text-slate-200 uppercase tracking-widest">
+                                                            No tasks scheduled
+                                                        </p>
+                                                    </div>
+                                                )}
+                                            </div>
                                         </div>
-                                    </div>
-                                );
-                            })}
+                                    )
+                                })
+                            )}
 
                             {todos?.next_page_url && (
                                 <button
@@ -729,17 +986,24 @@ export default function Index({ todos, showingHistory }) {
             )}
             {/* Deletion Confirmation */}
             <ConfirmationModal
-                show={!!todoToDelete}
-                onClose={() => setTodoToDelete(null)}
+                show={!!todoToDelete || !!dateToDelete}
+                onClose={() => {
+                    setTodoToDelete(null);
+                    setDateToDelete(null);
+                }}
                 onConfirm={confirmDelete}
-                title="Delete Action?"
+                title={dateToDelete ? "Clear History?" : "Delete Action?"}
                 message={
-                    todoToDelete
-                        ? `Are you sure you want to delete "${todoToDelete.title}"? This cannot be undone.`
-                        : ""
+                    dateToDelete
+                        ? `Are you sure you want to delete all tasks and history for ${dateToDelete}? This action cannot be undone.`
+                        : todoToDelete
+                          ? `Are you sure you want to delete "${todoToDelete.title}"? This cannot be undone.`
+                          : ""
                 }
-                confirmText="Delete Forever"
+                confirmText={dateToDelete ? "Clear Day" : "Delete Forever"}
             />
+                </div>
+            </>
         </AuthenticatedLayout>
     );
 }

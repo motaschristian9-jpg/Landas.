@@ -29,6 +29,7 @@ Route::middleware('auth')->group(function () {
     Route::patch('/goals/{goal}/milestones/{milestone}', [GoalController::class, 'toggleMilestone'])->name('goals.milestones.toggle');
     Route::delete('/goals/{goal}/milestones/{milestone}', [GoalController::class, 'deleteMilestone'])->name('goals.milestones.destroy');
     Route::resource('todos', TodoController::class);
+    Route::delete('/todos/bulk/date', [TodoController::class, 'destroyByDate'])->name('todos.destroyByDate');
     Route::resource('habits', HabitController::class);
     Route::post('/habits/{habit}/log', [HabitController::class, 'log'])->name('habits.log');
     Route::post('/habits/{habit}/recover', [HabitController::class, 'recover'])->name('habits.recover');

@@ -266,33 +266,33 @@ export default function Index({ goals, categories, priorities }) {
                                     <div className="flex flex-col md:flex-row gap-10">
                                         {/* Left: Info */}
                                         <div className="md:w-1/3">
-                                            <div className="bg-slate-50 rounded-[2rem] p-6 h-full flex flex-col justify-between">
-                                                <div>
-                                                    <div className="flex items-center space-x-2 mb-4">
+                                            <div className="bg-slate-50 rounded-[2rem] p-6 h-full flex flex-col">
+                                                <div className="flex items-center justify-between mb-6">
+                                                    <div className="flex items-center space-x-2">
                                                         <MapPin size={16} className="text-emerald-500" />
                                                         <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Context</span>
                                                     </div>
-                                                    <h2 className="text-3xl font-black text-slate-800 tracking-tighter leading-tight mb-4">{selectedGoal.title}</h2>
-                                                    <p className="text-sm font-bold text-slate-600 leading-relaxed italic">
-                                                        "{selectedGoal.description || 'No description provided.'}"
-                                                    </p>
+                                                    <div className="flex items-center space-x-2">
+                                                        <button 
+                                                            onClick={() => openEditModal(selectedGoal)} 
+                                                            title="Edit Vision"
+                                                            className="w-10 h-10 bg-white text-slate-400 hover:text-emerald-500 rounded-xl flex items-center justify-center transition-all shadow-sm active:scale-95 border border-slate-100"
+                                                        >
+                                                            <Edit3 size={16} strokeWidth={2.5} />
+                                                        </button>
+                                                        <button 
+                                                            onClick={() => deleteGoal(selectedGoal)} 
+                                                            title="Delete Vision"
+                                                            className="w-10 h-10 bg-white text-slate-400 hover:text-rose-500 rounded-xl flex items-center justify-center transition-all shadow-sm active:scale-95 border border-slate-100"
+                                                        >
+                                                            <Trash2 size={16} strokeWidth={2.5} />
+                                                        </button>
+                                                    </div>
                                                 </div>
-                                                <div className="mt-8 flex items-center gap-3">
-                                                    <button 
-                                                        onClick={() => openEditModal(selectedGoal)} 
-                                                        className="flex-1 flex items-center justify-center space-x-2 bg-slate-900 hover:bg-emerald-500 text-white px-4 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-lg shadow-slate-200 active:scale-95"
-                                                    >
-                                                        <Edit3 size={14} />
-                                                        <span>Refine Vision</span>
-                                                    </button>
-                                                    <button 
-                                                        onClick={() => deleteGoal(selectedGoal)} 
-                                                        title="Delete Vision"
-                                                        className="w-11 h-11 shrink-0 bg-rose-50 text-rose-500 hover:bg-rose-500 hover:text-white rounded-xl flex items-center justify-center transition-all shadow-sm active:scale-95"
-                                                    >
-                                                        <Trash2 size={16} strokeWidth={2.5} />
-                                                    </button>
-                                                </div>
+                                                <h2 className="text-3xl font-black text-slate-800 tracking-tighter leading-tight mb-4">{selectedGoal.title}</h2>
+                                                <p className="text-sm font-bold text-slate-600 leading-relaxed italic">
+                                                    "{selectedGoal.description || 'No description provided.'}"
+                                                </p>
                                             </div>
                                         </div>
 

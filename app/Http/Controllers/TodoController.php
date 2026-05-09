@@ -22,9 +22,8 @@ class TodoController extends Controller
                   ->orWhereDate('completed_at', \Carbon\Carbon::today());
             });
         } else {
-            // History: Only show completed tasks from before today
-            $query->where('is_completed', true)
-                  ->whereDate('completed_at', '<', \Carbon\Carbon::today());
+            // History: Show all tasks created before today
+            $query->whereDate('created_at', '<', \Carbon\Carbon::today());
         }
 
         $query->orderBy('is_completed', 'asc')
@@ -87,5 +86,20 @@ class TodoController extends Controller
         $todo->delete();
 
         return redirect()->back()->with('success', 'Task deleted.');
+    }
+
+    public function destroyByDate(Request $request)
+    {
+        $validated = $request->validate([
+            'date' => 'required|string',
+        ]);
+
+        $date = \Carbon\Carbon::parse($validated['date']);
+
+        Auth::user()->todos()
+            ->whereDate('created_at', $date)
+            ->delete();
+
+        return redirect()->back()->with('success', 'History for selected date cleared.');
     }
 }

@@ -54,6 +54,7 @@ export default function TaskShelf({ todos, nextUrl, onLoadMore }) {
         );
     });
 
+    const displayTodos = sortedTodos.slice(0, 5);
     const activeCount = todos.filter((t) => !t.is_completed).length;
 
     return (
@@ -78,7 +79,7 @@ export default function TaskShelf({ todos, nextUrl, onLoadMore }) {
 
             <div className="space-y-3">
                 <AnimatePresence mode="popLayout">
-                    {sortedTodos.map((todo) => (
+                    {displayTodos.map((todo) => (
                         <motion.div
                             key={todo.id}
                             layout
@@ -203,14 +204,6 @@ export default function TaskShelf({ todos, nextUrl, onLoadMore }) {
                     </div>
                 )}
 
-                {nextUrl && (
-                    <button
-                        onClick={onLoadMore}
-                        className="w-full py-4 flex items-center justify-center text-[10px] font-black text-slate-400 uppercase tracking-widest hover:text-emerald-500 hover:bg-emerald-50 rounded-2xl transition-all"
-                    >
-                        Load More Tasks
-                    </button>
-                )}
             </div>
             {/* Deletion Confirmation */}
             <ConfirmationModal
