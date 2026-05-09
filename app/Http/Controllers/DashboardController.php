@@ -8,7 +8,9 @@ use App\Models\Todo;
 use App\Services\GamificationService;
 use App\Services\GoalService;
 use App\Services\HabitService;
-use App\Services\SuggestionService;
+use App\Services\PathService;
+use App\Services\GeminiService;
+use App\Models\PathGuidance;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Carbon\Carbon;
@@ -19,7 +21,8 @@ class DashboardController extends Controller
         HabitService $habitService,
         GoalService $goalService,
         GamificationService $gamificationService,
-        SuggestionService $suggestionService
+        PathService $pathService,
+        GeminiService $geminiService
     ) {
         $user = auth()->user();
         
@@ -72,8 +75,21 @@ class DashboardController extends Controller
             ];
         });
 
-        // 5. Smart Suggestions
-        $suggestions = $suggestionService->getSuggestions($user);
+        // 5. Path AI Guidance (Supportive Coach)
+        $pathGuidance = $user->pathGuidances()
+            ->whereDate('created_at', Carbon::today())
+            ->latest()
+            ->first();
+
+        if (!$pathGuidance) {
+            $signals = $pathService->getSignals($user);
+            $message = $geminiService->generateGuidance($signals, $user->name);
+            
+            $pathGuidance = $user->pathGuidances()->create([
+                'message' => $message,
+                'signals_snapshot' => $signals,
+            ]);
+        }
 
         return Inertia::render('Dashboard', [
             'stats' => [
@@ -85,7 +101,7 @@ class DashboardController extends Controller
             'todayTodos' => $todayTodos,
             'dailyHabits' => $habits,
             'goals' => $goals,
-            'suggestions' => $suggestions,
+            'pathGuidance' => $pathGuidance,
             'heartsCount' => $user->hearts_count,
         ]);
     }

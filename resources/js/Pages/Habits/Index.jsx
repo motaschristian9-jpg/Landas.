@@ -65,23 +65,16 @@ export default function Index({ habits, heartsCount }) {
     };
 
     useEffect(() => {
-        if (habits?.current_page > 1) {
-            setLocalHabits(prev => {
-                const newItems = habits.data.filter(item => !prev.some(p => p.id === item.id));
-                return [...prev, ...newItems];
-            });
-        } else {
-            setLocalHabits(habits?.data || []);
-        }
+        setLocalHabits(habits?.data || []);
     }, [habits]);
 
     const deleteHabit = (habit) => {
         setHabitToDelete(habit);
     };
 
-    const loadMore = () => {
-        if (!habits?.next_page_url) return;
-        router.visit(habits.next_page_url, {
+    const changePage = (url) => {
+        if (!url) return;
+        router.visit(url, {
             only: ['habits'],
             preserveState: true,
             preserveScroll: true,
@@ -298,15 +291,30 @@ export default function Index({ habits, heartsCount }) {
                         ))}
                     </AnimatePresence>
 
-                    {habits?.next_page_url && (
-                        <div className="lg:col-span-2 pt-4">
-                            <button 
-                                onClick={loadMore}
-                                className="w-full py-6 flex items-center justify-center space-x-2 bg-slate-50 border-2 border-dashed border-slate-200 rounded-[2.5rem] text-[10px] font-black text-slate-400 uppercase tracking-widest hover:text-emerald-500 hover:border-emerald-200 hover:bg-emerald-50 transition-all active:scale-95"
-                            >
-                                <ArrowRight size={16} />
-                                <span>Load More Habits</span>
-                            </button>
+                    {habits?.last_page > 1 && (
+                        <div className="lg:col-span-2 pt-12 flex flex-col items-center">
+                            <div className="flex items-center space-x-2">
+                                {habits.links.map((link, i) => {
+                                    if (link.label.includes('Previous') || link.label.includes('Next')) return null;
+                                    
+                                    return (
+                                        <button
+                                            key={i}
+                                            disabled={!link.url || link.active}
+                                            onClick={() => changePage(link.url)}
+                                            className={`w-12 h-12 rounded-2xl flex items-center justify-center font-black transition-all ${
+                                                link.active 
+                                                    ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-100' 
+                                                    : link.url 
+                                                        ? 'bg-white border-2 border-slate-100 text-slate-400 hover:border-emerald-200 hover:text-emerald-500' 
+                                                        : 'opacity-0'
+                                            }`}
+                                        >
+                                            {link.label}
+                                        </button>
+                                    );
+                                })}
+                            </div>
                         </div>
                     )}
 

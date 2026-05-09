@@ -38,6 +38,7 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::get('/mastery', [MasteryController::class, 'index'])->name('mastery.index');
+    Route::post('/guidance/{guidance}/acknowledge', [\App\Http\Controllers\GuidanceController::class, 'acknowledge'])->name('guidance.acknowledge');
 });
 
 require __DIR__.'/auth.php';

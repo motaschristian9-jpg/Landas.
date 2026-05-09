@@ -4,6 +4,7 @@ import { Head, Link, useForm, usePage, router } from '@inertiajs/react';
 import ActionShelf from '@/Components/ActionShelf';
 import VisionHub from '@/Components/VisionHub';
 import TaskShelf from '@/Components/TaskShelf';
+import PathCompanion from '@/Components/PathCompanion';
 import { Trophy, Zap, Award, Sparkles, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -12,7 +13,7 @@ export default function Dashboard({
     todayTodos, 
     dailyHabits,
     goals,
-    suggestions,
+    pathGuidance,
     heartsCount 
 }) {
     const { auth } = usePage().props;
@@ -117,44 +118,8 @@ export default function Dashboard({
                     </div>
                 </div>
 
-                {/* 2. Proactive Guidance (Command Directive) */}
-                <AnimatePresence>
-                    {(suggestions.length > 0 && !dismissedSuggestion) && (
-                        <motion.div 
-                            initial={{ y: 20, opacity: 0 }}
-                            animate={{ y: 0, opacity: 1 }}
-                            exit={{ height: 0, opacity: 0, marginBottom: 0 }}
-                            className="relative group"
-                        >
-                            <div className="relative bg-white border-2 border-slate-50 rounded-[2.5rem] p-5 px-10 shadow-xl shadow-slate-100/50 flex flex-col md:flex-row items-center justify-between gap-6">
-                                
-                                <div className="flex items-center space-x-8 relative z-10">
-                                    <div className="relative">
-                                        <div className="w-14 h-14 rounded-2xl bg-emerald-50 text-emerald-500 flex items-center justify-center shadow-inner">
-                                            <Sparkles size={24} strokeWidth={2.5} />
-                                        </div>
-                                        <div className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-500 rounded-full animate-ping opacity-20"></div>
-                                    </div>
-                                    
-                                    <div>
-                                        <p className="text-[9px] font-black uppercase tracking-[0.5em] text-slate-300 mb-1">Architect's Guidance</p>
-                                        <p className="font-bold text-lg tracking-tight text-slate-800 leading-tight">
-                                            {suggestions[0].message}
-                                        </p>
-                                    </div>
-                                </div>
-                                
-                                <button 
-                                    onClick={() => setDismissedSuggestion(true)}
-                                    className="relative z-10 bg-slate-900 text-white px-8 py-3.5 rounded-2xl font-black text-[9px] uppercase tracking-widest hover:bg-emerald-500 hover:shadow-lg hover:shadow-emerald-100 transition-all active:scale-95 flex items-center group/btn"
-                                >
-                                    <span>Acknowledge</span>
-                                    <ChevronRight className="ml-2 w-3.5 h-3.5 group-hover/btn:translate-x-1 transition-transform" />
-                                </button>
-                            </div>
-                        </motion.div>
-                    )}
-                </AnimatePresence>
+                {/* 2. Proactive Guidance (Path AI Coach) */}
+                <PathCompanion guidance={pathGuidance} />
 
                 {/* 3. Operational Grid */}
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-12">

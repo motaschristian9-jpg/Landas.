@@ -78,4 +78,9 @@ class User extends Authenticatable
     {
         return $this->hasOne(UserStat::class);
     }
+
+    public function pathGuidances()
+    {
+        return $this->hasMany(PathGuidance::class);
+    }
 }
