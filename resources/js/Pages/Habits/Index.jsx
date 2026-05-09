@@ -5,9 +5,10 @@ import { motion, AnimatePresence, useMotionValue, useTransform } from 'framer-mo
 import { 
     Plus, Heart, Flame, Calendar, Info, 
     CheckCircle2, Circle, MoreVertical, Trash2,
-    Settings2, Sparkles, Activity, Target, ArrowRight
+    Settings2, Sparkles, Activity, Target, ChevronRight
 } from 'lucide-react';
 import ConfirmationModal from '@/Components/ConfirmationModal';
+import { useTheme } from '@/Contexts/ThemeContext';
 
 export default function Index({ habits, heartsCount }) {
     const [localHabits, setLocalHabits] = useState(habits?.data || []);
@@ -113,9 +114,9 @@ export default function Index({ habits, heartsCount }) {
                     <div className="max-w-2xl">
                         <div className="flex items-center space-x-4 mb-3 opacity-40">
                             <div className="w-12 h-[3px] bg-emerald-500 rounded-full"></div>
-                            <span className="text-[10px] font-black uppercase tracking-[0.5em] text-slate-900">Pillar Two</span>
+                            <span className="text-[10px] font-black uppercase tracking-[0.5em] text-slate-900 dark:text-white">Pillar Two</span>
                         </div>
-                        <h1 className="text-7xl font-black tracking-tighter text-slate-900 leading-[0.8] mb-6">
+                        <h1 className="text-7xl font-black tracking-tighter text-slate-900 dark:text-white leading-[0.8] mb-6">
                             Daily <span className="text-emerald-500">Discipline.</span>
                         </h1>
                         <p className="text-slate-400 font-bold text-lg leading-relaxed">
@@ -124,19 +125,19 @@ export default function Index({ habits, heartsCount }) {
                     </div>
 
                     <div className="mt-8 md:mt-0 flex items-center space-x-6">
-                        <div className="bg-white border-2 border-slate-100 p-6 rounded-[2.5rem] shadow-xl shadow-slate-100 flex items-center space-x-4">
-                            <div className="w-12 h-12 rounded-2xl bg-emerald-500 flex items-center justify-center text-white shadow-lg shadow-emerald-200">
+                        <div className="bg-white dark:bg-slate-900 border-2 border-slate-100 dark:border-slate-800 p-6 rounded-[2.5rem] shadow-xl shadow-slate-100 dark:shadow-none flex items-center space-x-4">
+                            <div className="w-12 h-12 rounded-2xl bg-emerald-500 flex items-center justify-center text-white shadow-lg shadow-emerald-200 dark:shadow-none">
                                 <Heart size={24} className="fill-current" />
                             </div>
                             <div>
                                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Streak Armor</p>
-                                <p className="text-2xl font-black text-slate-900 leading-none">{heartsCount} Hearts</p>
+                                <p className="text-2xl font-black text-slate-900 dark:text-white leading-none">{heartsCount} Hearts</p>
                             </div>
                         </div>
 
                         <button 
                             onClick={() => { setEditingHabit(null); reset(); setShowModal(true); }}
-                            className="w-20 h-20 rounded-[2.5rem] bg-slate-900 text-white flex items-center justify-center hover:bg-emerald-500 transition-all active:scale-90 shadow-2xl shadow-slate-200"
+                            className="w-20 h-20 rounded-[2.5rem] bg-slate-900 dark:bg-emerald-500 text-white flex items-center justify-center hover:bg-emerald-500 dark:hover:bg-emerald-600 transition-all active:scale-90 shadow-2xl shadow-slate-200 dark:shadow-none"
                         >
                             <Plus size={36} strokeWidth={3} />
                         </button>
@@ -153,7 +154,7 @@ export default function Index({ habits, heartsCount }) {
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 exit={{ opacity: 0, scale: 0.9 }}
-                                className="bg-white rounded-[3rem] p-8 border-2 border-slate-50 shadow-xl shadow-slate-100/50 group relative overflow-hidden"
+                                className="bg-white dark:bg-slate-900 rounded-[3rem] p-8 border-2 border-slate-50 dark:border-slate-800 shadow-xl shadow-slate-100/50 dark:shadow-none group relative overflow-hidden"
                             >
                                 {/* Background Glow */}
                                 <div className={`absolute top-0 right-0 w-32 h-32 bg-${habit.color || 'emerald'}-500/5 rounded-full blur-3xl -translate-y-16 translate-x-16 group-hover:scale-150 transition-transform duration-700`}></div>
@@ -164,7 +165,7 @@ export default function Index({ habits, heartsCount }) {
                                             <Activity size={32} />
                                         </div>
                                         <div>
-                                            <h3 className="text-3xl font-black tracking-tighter text-slate-900 leading-none mb-2">{habit.title}</h3>
+                                            <h3 className="text-3xl font-black tracking-tighter text-slate-900 dark:text-white leading-none mb-2">{habit.title}</h3>
                                             <div className="flex items-center space-x-2">
                                                 <div className="flex items-center space-x-1 text-orange-500">
                                                     <Flame size={14} className="fill-current" />
@@ -176,13 +177,13 @@ export default function Index({ habits, heartsCount }) {
                                     <div className="flex space-x-2">
                                         <button 
                                             onClick={() => openEdit(habit)}
-                                            className="p-3 rounded-xl bg-slate-50 text-slate-400 hover:text-slate-900 transition-colors"
+                                            className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800 text-slate-400 dark:text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors"
                                         >
                                             <Settings2 size={18} />
                                         </button>
                                         <button 
                                             onClick={() => deleteHabit(habit)}
-                                            className="p-3 rounded-xl bg-slate-50 text-slate-400 hover:text-rose-500 transition-colors"
+                                            className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800 text-slate-400 dark:text-slate-500 hover:text-rose-500 transition-colors"
                                         >
                                             <Trash2 size={18} />
                                         </button>
@@ -202,7 +203,7 @@ export default function Index({ habits, heartsCount }) {
                                         </span>
                                     </div>
                                     
-                                    <div className="p-6 bg-slate-50/50 rounded-[2.5rem] border border-slate-100 flex items-end space-x-4 overflow-x-auto">
+                                    <div className="p-6 bg-slate-50/50 dark:bg-slate-800/30 rounded-[2.5rem] border border-slate-100 dark:border-slate-800 flex items-end space-x-4 overflow-x-auto">
                                         {/* Day Labels */}
                                         <div className="flex flex-col space-y-2 pb-1">
                                             {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((d, i) => (
@@ -240,8 +241,8 @@ export default function Index({ habits, heartsCount }) {
                                                                     className={`w-3.5 h-3.5 rounded-sm transition-all ${
                                                                          isDone 
                                                                          ? `bg-${habit.color || 'emerald'}-500 shadow-sm shadow-${habit.color || 'emerald'}-500/20 scale-110` 
-                                                                         : 'bg-slate-200'
-                                                                     } ${isToday ? 'ring-2 ring-emerald-500 ring-offset-2' : ''}`}
+                                                                         : 'bg-slate-200 dark:bg-slate-800'
+                                                                     } ${isToday ? 'ring-2 ring-emerald-500 ring-offset-2 dark:ring-offset-slate-900' : ''}`}
                                                                     title={`${day.date}${isToday ? ' (Today)' : ''}`}
                                                                 />
                                                             );
@@ -253,7 +254,7 @@ export default function Index({ habits, heartsCount }) {
 
                                         <div className="flex-1 text-right">
                                             <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Consistency</div>
-                                            <div className="text-2xl font-black text-slate-900 tracking-tighter">
+                                            <div className="text-2xl font-black text-slate-900 dark:text-white tracking-tighter">
                                                 {Math.round((habit.logs_count / 30) * 100)}%
                                             </div>
                                         </div>
@@ -278,7 +279,7 @@ export default function Index({ habits, heartsCount }) {
                                             {habit.streak === 0 && habit.logs_count > 0 && heartsCount > 0 && (
                                                 <button 
                                                     onClick={() => recoverStreak(habit)}
-                                                    className="w-full py-4 rounded-2xl bg-emerald-500 text-white shadow-xl shadow-emerald-200 font-black text-[10px] uppercase tracking-[0.2em] hover:scale-[1.02] active:scale-95 flex items-center justify-center space-x-2"
+                                                    className="w-full py-4 rounded-2xl bg-emerald-500 text-white shadow-xl shadow-emerald-200 dark:shadow-none font-black text-[10px] uppercase tracking-[0.2em] hover:scale-[1.02] active:scale-95 flex items-center justify-center space-x-2"
                                                 >
                                                     <Heart size={16} className="fill-current" />
                                                     <span>Armor Streak (1 Heart)</span>
@@ -304,9 +305,9 @@ export default function Index({ habits, heartsCount }) {
                                             onClick={() => changePage(link.url)}
                                             className={`w-12 h-12 rounded-2xl flex items-center justify-center font-black transition-all ${
                                                 link.active 
-                                                    ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-100' 
+                                                    ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-100 dark:shadow-none' 
                                                     : link.url 
-                                                        ? 'bg-white border-2 border-slate-100 text-slate-400 hover:border-emerald-200 hover:text-emerald-500' 
+                                                        ? 'bg-white dark:bg-slate-900 border-2 border-slate-100 dark:border-slate-800 text-slate-400 dark:text-slate-500 hover:border-emerald-200 dark:hover:border-emerald-500/30 hover:text-emerald-500' 
                                                         : 'opacity-0'
                                             }`}
                                         >
@@ -319,15 +320,15 @@ export default function Index({ habits, heartsCount }) {
                     )}
 
                     {localHabits.length === 0 && (
-                        <div className="lg:col-span-2 py-32 flex flex-col items-center justify-center border-4 border-dashed border-slate-50 rounded-[4rem]">
-                            <div className="w-24 h-24 rounded-[2rem] bg-slate-50 flex items-center justify-center text-slate-200 mb-8">
+                        <div className="lg:col-span-2 py-32 flex flex-col items-center justify-center border-4 border-dashed border-slate-50 dark:border-slate-800 rounded-[4rem]">
+                            <div className="w-24 h-24 rounded-[2rem] bg-slate-50 dark:bg-slate-900 flex items-center justify-center text-slate-200 dark:text-slate-800 mb-8">
                                 <Activity size={48} />
                             </div>
-                            <h3 className="text-2xl font-black text-slate-900 tracking-tighter mb-2">No Discipline Defined.</h3>
+                            <h3 className="text-2xl font-black text-slate-900 dark:text-white tracking-tighter mb-2">No Discipline Defined.</h3>
                             <p className="text-slate-400 font-bold max-w-sm text-center">Your future is created by what you do today, not tomorrow.</p>
                             <button 
                                 onClick={() => setShowModal(true)}
-                                className="mt-8 bg-slate-900 text-white px-10 py-4 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-emerald-500 transition-all shadow-xl shadow-slate-200"
+                                className="mt-8 bg-slate-900 dark:bg-emerald-500 text-white px-10 py-4 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-emerald-500 dark:hover:bg-emerald-600 transition-all shadow-xl shadow-slate-200 dark:shadow-none"
                             >
                                 Forge First Habit
                             </button>
@@ -343,14 +344,14 @@ export default function Index({ habits, heartsCount }) {
                     <motion.div 
                         initial={{ scale: 0.9, opacity: 0 }}
                         animate={{ scale: 1, opacity: 1 }}
-                        className="relative w-full max-w-lg bg-white rounded-[3.5rem] p-10 border-4 border-white shadow-2xl"
+                        className="relative w-full max-w-lg bg-white dark:bg-slate-900 rounded-[3.5rem] p-10 border-4 border-white dark:border-slate-800 shadow-2xl"
                     >
 
                         <div className="flex justify-between items-start mb-8 relative z-10">
-                            <h2 className="text-3xl font-black text-slate-900 tracking-tighter">
+                            <h2 className="text-3xl font-black text-slate-900 dark:text-white tracking-tighter">
                                 {editingHabit ? 'Refine Discipline' : 'Forge Discipline'}<span className="text-emerald-500">.</span>
                             </h2>
-                            <button onClick={() => setShowModal(false)} type="button" className="w-10 h-10 bg-slate-50 hover:bg-rose-50 text-slate-400 hover:text-rose-500 rounded-xl flex items-center justify-center transition-all group shadow-sm shrink-0">
+                            <button onClick={() => setShowModal(false)} type="button" className="w-10 h-10 bg-slate-50 dark:bg-slate-800 hover:bg-rose-50 dark:hover:bg-rose-900/20 text-slate-400 dark:text-slate-500 hover:text-rose-500 rounded-xl flex items-center justify-center transition-all group shadow-sm shrink-0">
                                 <svg className="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3"><path d="M6 18L18 6M6 6l12 12"/></svg>
                             </button>
                         </div>
@@ -365,7 +366,7 @@ export default function Index({ habits, heartsCount }) {
                                     value={data.title}
                                     onChange={e => setData('title', e.target.value)}
                                     placeholder="e.g., Morning Meditation" 
-                                    className="w-full px-8 py-5 rounded-3xl border-2 border-slate-100 font-black text-xl focus:border-emerald-500 outline-none transition-all placeholder:text-slate-200"
+                                    className="w-full px-8 py-5 rounded-3xl border-2 border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 font-black text-xl dark:text-white focus:border-emerald-500 outline-none transition-all placeholder:text-slate-200 dark:placeholder:text-slate-600"
                                 />
                             </div>
 
@@ -375,7 +376,7 @@ export default function Index({ habits, heartsCount }) {
                                     value={data.description}
                                     onChange={e => setData('description', e.target.value)}
                                     placeholder="Define the cues and rewards..." 
-                                    className="w-full px-8 py-5 rounded-3xl border-2 border-slate-100 font-bold text-base focus:border-emerald-500 outline-none transition-all min-h-[80px] resize-none placeholder:text-slate-200"
+                                    className="w-full px-8 py-5 rounded-3xl border-2 border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 font-bold text-base dark:text-white focus:border-emerald-500 outline-none transition-all min-h-[80px] resize-none placeholder:text-slate-200 dark:placeholder:text-slate-600"
                                 />
                             </div>
 
@@ -395,8 +396,8 @@ export default function Index({ habits, heartsCount }) {
                                             }}
                                             className={`w-9 h-9 rounded-xl text-[10px] font-black transition-all ${
                                                 data.scheduled_days?.includes(day.key)
-                                                ? 'bg-slate-900 text-white shadow-lg shadow-slate-100'
-                                                : 'bg-slate-50 text-slate-300 hover:text-slate-500'
+                                                ? 'bg-slate-900 dark:bg-emerald-500 text-white shadow-lg shadow-slate-100 dark:shadow-none'
+                                                : 'bg-slate-50 dark:bg-slate-800 text-slate-300 dark:text-slate-600 hover:text-slate-500 dark:hover:text-slate-400'
                                             }`}
                                         >
                                             {day.label}
@@ -408,7 +409,7 @@ export default function Index({ habits, heartsCount }) {
                             <button 
                                 type="submit" 
                                 disabled={processing}
-                                className="w-full bg-slate-900 text-white py-6 rounded-[2rem] font-black text-xs uppercase tracking-[0.2em] hover:bg-emerald-500 transition-all shadow-2xl shadow-slate-200 mt-6 active:scale-95 disabled:opacity-50"
+                                className="w-full bg-slate-900 dark:bg-emerald-500 text-white py-6 rounded-[2rem] font-black text-xs uppercase tracking-[0.2em] hover:bg-emerald-500 dark:hover:bg-emerald-600 transition-all shadow-2xl shadow-slate-200 dark:shadow-none mt-6 active:scale-95 disabled:opacity-50"
                             >
                                 {editingHabit ? 'Save Refinements' : 'Commit to Discipline'}
                             </button>
@@ -431,8 +432,10 @@ export default function Index({ habits, heartsCount }) {
 
 function HabitSlider({ habit, onComplete, processing }) {
     const containerRef = useRef(null);
+    const { resolvedTheme } = useTheme();
     const x = useMotionValue(0);
-    const background = useTransform(x, [0, 200], ["#f1f5f9", "#10b981"]);
+    const startColor = resolvedTheme === 'dark' ? '#020617' : '#f1f5f9'; // slate-950 vs slate-100
+    const background = useTransform(x, [0, 200], [startColor, "#10b981"]);
     const opacity = useTransform(x, [0, 100], [1, 0]);
     const [isTriggered, setIsTriggered] = useState(false);
     const [constraints, setConstraints] = useState({ left: 0, right: 0 });
@@ -457,11 +460,11 @@ function HabitSlider({ habit, onComplete, processing }) {
             <motion.div 
                 ref={containerRef}
                 style={{ background }}
-                className="h-20 w-full rounded-full relative overflow-hidden flex items-center p-2 border-2 border-slate-50 shadow-inner"
+                className="h-20 w-full rounded-full relative overflow-hidden flex items-center p-2 border-2 border-slate-50 dark:border-slate-800 shadow-inner"
             >
                 <motion.div 
                     style={{ opacity }}
-                    className="absolute inset-0 flex items-center justify-center pl-16 md:pl-0 font-black text-[10px] uppercase tracking-[0.15em] md:tracking-[0.4em] text-slate-400 pointer-events-none whitespace-nowrap"
+                    className="absolute inset-0 flex items-center justify-center pl-16 md:pl-0 font-black text-[9px] uppercase tracking-[0.15em] md:tracking-[0.4em] text-slate-400 dark:text-slate-500 pointer-events-none whitespace-nowrap"
                 >
                     {processing ? 'Processing...' : 'Slide to Discipline'}
                 </motion.div>
@@ -472,9 +475,9 @@ function HabitSlider({ habit, onComplete, processing }) {
                     dragElastic={0.05}
                     style={{ x }}
                     onDragEnd={handleDragEnd}
-                    className="w-16 h-16 rounded-full bg-white shadow-xl flex items-center justify-center text-slate-900 cursor-grab active:cursor-grabbing z-10 border border-slate-100"
+                    className="w-16 h-16 rounded-full bg-white dark:bg-slate-800 shadow-xl flex items-center justify-center text-emerald-500 cursor-grab active:cursor-grabbing z-10 border border-slate-100 dark:border-slate-700"
                 >
-                    <ArrowRight size={24} strokeWidth={3} />
+                    <ChevronRight size={32} strokeWidth={3} />
                 </motion.div>
             </motion.div>
         </div>

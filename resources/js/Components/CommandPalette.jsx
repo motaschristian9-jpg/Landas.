@@ -67,9 +67,9 @@ export default function CommandPalette() {
                         initial={{ opacity: 0, scale: 0.95, y: -20 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.95, y: -20 }}
-                        className="relative w-full max-w-xl bg-white/90 backdrop-blur-2xl rounded-[2.5rem] shadow-2xl border-2 border-white overflow-hidden"
+                        className="relative w-full max-w-xl bg-white/90 dark:bg-slate-900/90 backdrop-blur-2xl rounded-[2.5rem] shadow-2xl border-2 border-white dark:border-slate-800 overflow-hidden"
                     >
-                        <div className="p-6 border-b border-slate-100 flex items-center space-x-4">
+                        <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center space-x-4">
                             <div className="text-emerald-500">
                                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                             </div>
@@ -93,10 +93,10 @@ export default function CommandPalette() {
                                         handleSelect(filteredActions[selectedIndex]);
                                     }
                                 }}
-                                className="w-full bg-transparent border-none focus:ring-0 text-xl font-black text-slate-800 placeholder-slate-300 tracking-tight"
+                                className="w-full bg-transparent border-none focus:ring-0 text-xl font-black text-slate-800 dark:text-white placeholder-slate-300 dark:placeholder-slate-600 tracking-tight"
                             />
-                            <div className="flex items-center space-x-1 px-2 py-1 bg-slate-100 rounded-lg">
-                                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Esc</span>
+                            <div className="flex items-center space-x-1 px-2 py-1 bg-slate-100 dark:bg-slate-800 rounded-lg">
+                                <span className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Esc</span>
                             </div>
                         </div>
 
@@ -107,13 +107,13 @@ export default function CommandPalette() {
                                     key={action.id}
                                     onClick={() => handleSelect(action)}
                                     onMouseEnter={() => setSelectedIndex(index)}
-                                    className={`w-full flex items-center justify-between p-4 rounded-2xl transition-all duration-200 group ${selectedIndex === index ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-100' : 'hover:bg-slate-50'}`}
+                                    className={`w-full flex items-center justify-between p-4 rounded-2xl transition-all duration-200 group ${selectedIndex === index ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-100' : 'hover:bg-slate-50 dark:hover:bg-slate-800/50'}`}
                                 >
                                     <div className="flex items-center space-x-4">
-                                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-xl shadow-sm ${selectedIndex === index ? 'bg-white/20' : 'bg-white border border-slate-100 group-hover:scale-110 transition-transform'}`}>
+                                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-xl shadow-sm ${selectedIndex === index ? 'bg-white/20' : 'bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 group-hover:scale-110 transition-transform'}`}>
                                             {action.icon}
                                         </div>
-                                        <span className={`text-sm font-black tracking-tight ${selectedIndex === index ? 'text-white' : 'text-slate-700'}`}>
+                                        <span className={`text-sm font-black tracking-tight ${selectedIndex === index ? 'text-white' : 'text-slate-700 dark:text-slate-200'}`}>
                                             {action.title}
                                         </span>
                                     </div>
@@ -131,15 +131,15 @@ export default function CommandPalette() {
                             )}
                         </div>
                         
-                        <div className="p-4 bg-slate-50/50 border-t border-slate-100 flex items-center justify-between">
+                        <div className="p-4 bg-slate-50/50 dark:bg-slate-800/50 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
                             <div className="flex items-center space-x-6">
                                 <div className="flex items-center space-x-2">
-                                    <kbd className="px-1.5 py-0.5 bg-white border border-slate-200 rounded text-[10px] font-black text-slate-400 shadow-sm">↑↓</kbd>
-                                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Navigate</span>
+                                    <kbd className="px-1.5 py-0.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded text-[10px] font-black text-slate-400 dark:text-slate-500 shadow-sm">↑↓</kbd>
+                                    <span className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Navigate</span>
                                 </div>
                                 <div className="flex items-center space-x-2">
-                                    <kbd className="px-1.5 py-0.5 bg-white border border-slate-200 rounded text-[10px] font-black text-slate-400 shadow-sm">↵</kbd>
-                                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Select</span>
+                                    <kbd className="px-1.5 py-0.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded text-[10px] font-black text-slate-400 dark:text-slate-500 shadow-sm">↵</kbd>
+                                    <span className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Select</span>
                                 </div>
                             </div>
                             <span className="text-[9px] font-black text-slate-300 uppercase tracking-widest">Bantay Nexus v1.0</span>

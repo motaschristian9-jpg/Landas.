@@ -34,6 +34,7 @@ class User extends Authenticatable
         'email',
         'password',
         'hearts_count',
+        'theme',
     ];
 
     /**

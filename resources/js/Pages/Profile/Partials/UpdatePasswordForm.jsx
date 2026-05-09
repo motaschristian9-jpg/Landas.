@@ -51,7 +51,7 @@ export default function UpdatePasswordForm({ className = '' }) {
                     <div className="w-6 h-[1.5px] bg-emerald-500 rounded-full"></div>
                     <span className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Security</span>
                 </div>
-                <h2 className="text-2xl font-black text-slate-800 tracking-tight">
+                <h2 className="text-2xl font-black text-slate-800 dark:text-white tracking-tight">
                     Update Password
                 </h2>
 
@@ -76,7 +76,7 @@ export default function UpdatePasswordForm({ className = '' }) {
                             setData('current_password', e.target.value)
                         }
                         type="password"
-                        className="mt-1 block w-full !rounded-2xl !border-slate-100 !bg-slate-50/50 focus:!ring-emerald-500/20 focus:!border-emerald-500 !py-4 transition-all"
+                        className="mt-1 block w-full !rounded-2xl !border-slate-100 dark:!border-slate-800 !bg-slate-50/50 dark:!bg-slate-900/50 focus:!ring-emerald-500/20 focus:!border-emerald-500 !py-4 transition-all"
                         autoComplete="current-password"
                     />
 
@@ -95,7 +95,7 @@ export default function UpdatePasswordForm({ className = '' }) {
                         value={data.password}
                         onChange={(e) => setData('password', e.target.value)}
                         type="password"
-                        className="mt-1 block w-full !rounded-2xl !border-slate-100 !bg-slate-50/50 focus:!ring-emerald-500/20 focus:!border-emerald-500 !py-4 transition-all"
+                        className="mt-1 block w-full !rounded-2xl !border-slate-100 dark:!border-slate-800 !bg-slate-50/50 dark:!bg-slate-900/50 focus:!ring-emerald-500/20 focus:!border-emerald-500 !py-4 transition-all"
                         autoComplete="new-password"
                     />
 
@@ -116,7 +116,7 @@ export default function UpdatePasswordForm({ className = '' }) {
                             setData('password_confirmation', e.target.value)
                         }
                         type="password"
-                        className="mt-1 block w-full !rounded-2xl !border-slate-100 !bg-slate-50/50 focus:!ring-emerald-500/20 focus:!border-emerald-500 !py-4 transition-all"
+                        className="mt-1 block w-full !rounded-2xl !border-slate-100 dark:!border-slate-800 !bg-slate-50/50 dark:!bg-slate-900/50 focus:!ring-emerald-500/20 focus:!border-emerald-500 !py-4 transition-all"
                         autoComplete="new-password"
                     />
 
@@ -130,7 +130,7 @@ export default function UpdatePasswordForm({ className = '' }) {
                     <button 
                         type="submit"
                         disabled={processing}
-                        className="bg-slate-900 text-white px-10 py-4 rounded-2xl text-[11px] font-black uppercase tracking-widest hover:bg-emerald-500 transition-all shadow-lg shadow-slate-200 active:scale-95 disabled:opacity-50"
+                        className="bg-slate-900 dark:bg-emerald-500 text-white px-10 py-4 rounded-2xl text-[11px] font-black uppercase tracking-widest hover:bg-emerald-500 dark:hover:bg-emerald-600 transition-all shadow-lg shadow-slate-200 dark:shadow-none active:scale-95 disabled:opacity-50"
                     >
                         Update Key
                     </button>
@@ -145,7 +145,7 @@ export default function UpdatePasswordForm({ className = '' }) {
                         leaveTo="opacity-0"
                     >
                         <div className="flex items-center space-x-2 text-emerald-500">
-                            <div className="w-5 h-5 rounded-full bg-emerald-50 flex items-center justify-center">
+                            <div className="w-5 h-5 rounded-full bg-emerald-50 dark:bg-emerald-900/30 flex items-center justify-center">
                                 <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="4"><path d="M5 13l4 4L19 7"/></svg>
                             </div>
                             <span className="text-[10px] font-black uppercase tracking-widest">Password Updated</span>

@@ -16,6 +16,16 @@
         @viteReactRefresh
         @vite(['resources/js/app.jsx', "resources/js/Pages/{$page['component']}.jsx"])
         @inertiaHead
+        <script>
+            (function() {
+                try {
+                    const theme = {!! Auth::user() ? '"'.Auth::user()->theme.'"' : '"system"' !!};
+                    if (theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                        document.documentElement.classList.add('dark');
+                    }
+                } catch (e) {}
+            })();
+        </script>
     </head>
     <body class="font-sans antialiased">
         @inertia

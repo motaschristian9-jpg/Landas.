@@ -61,13 +61,13 @@ export default function TaskShelf({ todos, nextUrl, onLoadMore }) {
         <div className="space-y-6">
             <div className="flex items-center justify-between px-2">
                 <div className="flex items-center space-x-3">
-                    <h2 className="text-2xl font-black text-slate-800 tracking-tighter">
+                    <h2 className="text-2xl font-black text-slate-800 dark:text-white tracking-tighter">
                         Daily Sprint
                     </h2>
                 </div>
                 <Link
                     href={route("todos.index")}
-                    className="bg-slate-50 hover:bg-emerald-50 text-[10px] font-black text-slate-400 hover:text-emerald-500 uppercase tracking-widest px-4 py-2 rounded-xl flex items-center transition-all group active:scale-95"
+                    className="bg-slate-50 dark:bg-slate-800/50 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 text-[10px] font-black text-slate-400 dark:text-slate-500 hover:text-emerald-500 uppercase tracking-widest px-4 py-2 rounded-xl flex items-center transition-all group active:scale-95"
                 >
                     Expand{" "}
                     <ChevronRight
@@ -88,8 +88,8 @@ export default function TaskShelf({ todos, nextUrl, onLoadMore }) {
                             exit={{ opacity: 0, scale: 0.95 }}
                             className={`p-6 md:p-5 rounded-[2.2rem] md:rounded-[2rem] border-2 transition-all cursor-pointer flex items-center justify-between group active:scale-[0.98] ${
                                 todo.is_completed
-                                    ? "bg-slate-50 border-slate-50 opacity-60"
-                                    : "bg-white border-slate-100 shadow-sm hover:border-emerald-200 hover:shadow-xl hover:shadow-slate-100/30"
+                                    ? "bg-slate-50 dark:bg-slate-900/50 border-slate-50 dark:border-slate-800 opacity-60"
+                                    : "bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800 shadow-sm hover:border-emerald-200 dark:hover:border-emerald-500/30 hover:shadow-xl hover:shadow-slate-100/30 dark:hover:shadow-none"
                             }`}
                             onClick={() => handleToggle(todo)}
                         >
@@ -113,7 +113,7 @@ export default function TaskShelf({ todos, nextUrl, onLoadMore }) {
 
                                 <div>
                                     <p
-                                        className={`font-black tracking-tight leading-tight text-base ${todo.is_completed ? "line-through text-slate-400" : "text-slate-700"}`}
+                                        className={`font-black tracking-tight leading-tight text-base ${todo.is_completed ? "line-through text-slate-400 dark:text-slate-600" : "text-slate-700 dark:text-slate-200"}`}
                                     >
                                         {todo.title}
                                     </p>
@@ -139,7 +139,7 @@ export default function TaskShelf({ todos, nextUrl, onLoadMore }) {
                                             </div>
                                         )}
                                         {todo.estimated_minutes > 0 && (
-                                            <div className="flex items-center text-[9px] font-black text-slate-300 uppercase tracking-widest">
+                                            <div className="flex items-center text-[9px] font-black text-slate-300 dark:text-slate-600 uppercase tracking-widest">
                                                 <Clock
                                                     size={10}
                                                     className="mr-1"
@@ -167,8 +167,8 @@ export default function TaskShelf({ todos, nextUrl, onLoadMore }) {
                                         }}
                                         className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all transform hover:scale-110 ${
                                             activeTask
-                                                ? "bg-slate-100 text-slate-300 cursor-not-allowed opacity-50"
-                                                : "bg-emerald-50 text-emerald-500 opacity-0 group-hover:opacity-100 hover:bg-emerald-500 hover:text-white"
+                                                ? "bg-slate-100 dark:bg-slate-800 text-slate-300 dark:text-slate-600 cursor-not-allowed opacity-50"
+                                                : "bg-emerald-50 dark:bg-emerald-900/20 text-emerald-500 opacity-0 group-hover:opacity-100 hover:bg-emerald-500 hover:text-white"
                                         }`}
                                         title={
                                             activeTask
@@ -186,7 +186,7 @@ export default function TaskShelf({ todos, nextUrl, onLoadMore }) {
                                             e.stopPropagation();
                                             handleDelete(todo);
                                         }}
-                                        className="w-10 h-10 rounded-xl bg-rose-50 text-rose-500 flex items-center justify-center opacity-0 group-hover:opacity-100 hover:bg-rose-500 hover:text-white transition-all transform hover:scale-110"
+                                        className="w-10 h-10 rounded-xl bg-rose-50 dark:bg-rose-900/20 text-rose-500 flex items-center justify-center opacity-0 group-hover:opacity-100 hover:bg-rose-500 hover:text-white transition-all transform hover:scale-110"
                                     >
                                         <Trash2 size={16} />
                                     </button>
@@ -197,8 +197,8 @@ export default function TaskShelf({ todos, nextUrl, onLoadMore }) {
                 </AnimatePresence>
 
                 {todos.length === 0 && (
-                    <div className="py-12 text-center border-2 border-dashed border-slate-50 rounded-[2.5rem]">
-                        <p className="text-slate-300 font-bold italic text-sm">
+                    <div className="py-12 text-center border-2 border-dashed border-slate-50 dark:border-slate-800 rounded-[2.5rem]">
+                        <p className="text-slate-300 dark:text-slate-600 font-bold italic text-sm">
                             Sprint completed. Rest well.
                         </p>
                     </div>

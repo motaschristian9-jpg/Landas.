@@ -184,11 +184,11 @@ export default function Index({ todos, showingHistory }) {
                     <div>
                         <div className="flex items-center space-x-4 mb-3 opacity-40">
                             <div className="w-12 h-[3px] bg-emerald-500 rounded-full"></div>
-                            <span className="text-[10px] font-black uppercase tracking-[0.5em] text-slate-900">
+                            <span className="text-[10px] font-black uppercase tracking-[0.5em] text-slate-900 dark:text-slate-100">
                                 Pillar One
                             </span>
                         </div>
-                        <h1 className="text-7xl font-black tracking-tighter text-slate-900 leading-[0.8] mb-6">
+                        <h1 className="text-7xl font-black tracking-tighter text-slate-900 dark:text-white leading-[0.8] mb-6">
                             {showingHistory ? (
                                 <>
                                     Mastery{" "}
@@ -205,7 +205,7 @@ export default function Index({ todos, showingHistory }) {
                                 </>
                             )}
                         </h1>
-                        <p className="text-slate-400 font-bold text-lg">
+                        <p className="text-slate-400 dark:text-slate-500 font-bold text-lg">
                             {showingHistory
                                 ? "Your lifetime of wins, preserved."
                                 : "Turning intentions into action."}
@@ -216,8 +216,8 @@ export default function Index({ todos, showingHistory }) {
                             onClick={toggleHistory}
                             className={`px-6 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all border-2 flex items-center space-x-2 ${
                                 showingHistory
-                                    ? "bg-emerald-500 text-white border-emerald-500 shadow-lg shadow-emerald-100"
-                                    : "bg-white text-slate-400 border-slate-100 hover:border-slate-200"
+                                    ? "bg-emerald-500 text-white border-emerald-500 shadow-lg shadow-emerald-100 dark:shadow-none"
+                                    : "bg-white dark:bg-slate-800 text-slate-400 border-slate-100 dark:border-slate-700 hover:border-slate-200 dark:hover:border-slate-600"
                             }`}
                         >
                             <Clock size={14} />
@@ -231,7 +231,7 @@ export default function Index({ todos, showingHistory }) {
                         {!showingHistory && (
                             <button
                                 onClick={() => setShowModal(true)}
-                                className="w-20 h-20 rounded-[2.5rem] bg-slate-900 text-white flex items-center justify-center hover:bg-emerald-500 transition-all active:scale-90 shadow-2xl shadow-slate-200"
+                                className="w-20 h-20 rounded-[2.5rem] bg-slate-900 dark:bg-emerald-500 text-white flex items-center justify-center hover:bg-emerald-500 dark:hover:bg-emerald-600 transition-all active:scale-90 shadow-2xl shadow-slate-200 dark:shadow-none"
                             >
                                 <Plus size={36} strokeWidth={3} />
                             </button>
@@ -244,7 +244,7 @@ export default function Index({ todos, showingHistory }) {
                     {!showingHistory && (
                         <div className="lg:col-span-4 flex flex-col items-center">
                         {/* Focus Hero */}
-                        <div className="bg-slate-900 rounded-[3rem] p-8 text-white relative overflow-hidden shadow-2xl shadow-slate-200 w-full">
+                        <div className="bg-slate-900 dark:bg-slate-800/50 rounded-[3rem] p-8 text-white relative overflow-hidden shadow-2xl shadow-slate-200 dark:shadow-none w-full">
                             <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/20 rounded-full blur-3xl -translate-y-16 translate-x-16"></div>
 
                             <div className="relative z-10">
@@ -298,8 +298,8 @@ export default function Index({ todos, showingHistory }) {
                                                 }
                                                 className={`w-full py-4 rounded-2xl font-black text-xs uppercase tracking-widest transition-all flex items-center justify-center space-x-2 ${
                                                     activeTask
-                                                        ? "bg-slate-800 text-slate-600 cursor-not-allowed"
-                                                        : "bg-emerald-500 text-white hover:bg-emerald-400 shadow-xl shadow-emerald-500/20"
+                                                        ? "bg-slate-800 dark:bg-slate-900 text-slate-600 cursor-not-allowed"
+                                                        : "bg-emerald-500 text-white hover:bg-emerald-400 shadow-xl shadow-emerald-500/20 dark:shadow-none"
                                                 }`}
                                             >
                                                 <Play
@@ -326,7 +326,7 @@ export default function Index({ todos, showingHistory }) {
                         </div>
 
                         {/* Momentum Chart */}
-                        <div className="bg-white rounded-[3rem] p-8 border-2 border-slate-50 shadow-xl shadow-slate-100/50 mt-8 w-full">
+                        <div className="bg-white dark:bg-slate-900 rounded-[3rem] p-8 border-2 border-slate-50 dark:border-slate-800 shadow-xl shadow-slate-100/50 dark:shadow-none mt-8 w-full">
                             <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-6">
                                 Daily Momentum
                             </h3>
@@ -336,7 +336,7 @@ export default function Index({ todos, showingHistory }) {
                                         cx="50%"
                                         cy="50%"
                                         r="70"
-                                        className="stroke-slate-50 fill-none"
+                                        className="stroke-slate-50 dark:stroke-slate-800 fill-none"
                                         strokeWidth="20"
                                     />
                                     <motion.circle
@@ -365,7 +365,7 @@ export default function Index({ todos, showingHistory }) {
                                     />
                                 </svg>
                                 <div className="absolute flex flex-col items-center">
-                                    <span className="text-4xl font-black text-slate-900 tracking-tighter">
+                                    <span className="text-4xl font-black text-slate-900 dark:text-white tracking-tighter">
                                         {Math.round(
                                             (completedTasks.length /
                                                 (localTodos.length || 1)) *
@@ -388,15 +388,15 @@ export default function Index({ todos, showingHistory }) {
                     >
                         {/* Filters - Hidden in History */}
                         {!showingHistory && (
-                            <div className="flex items-center space-x-2 mb-8 bg-slate-50 p-2 rounded-[2rem] self-start">
+                            <div className="flex items-center space-x-2 mb-8 bg-slate-50 dark:bg-slate-800 p-2 rounded-[2rem] self-start border-2 border-transparent dark:border-slate-800 shadow-sm dark:shadow-none">
                                 {["all", "active", "completed"].map((f) => (
                                     <button
                                         key={f}
                                         onClick={() => setFilter(f)}
                                         className={`px-6 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${
                                             filter === f
-                                                ? "bg-white text-slate-900 shadow-md"
-                                                : "text-slate-400 hover:text-slate-600"
+                                                ? "bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-md dark:shadow-none"
+                                                : "text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300"
                                         }`}
                                     >
                                         {f}
@@ -409,10 +409,10 @@ export default function Index({ todos, showingHistory }) {
                         <div className="space-y-12">
                             {showingHistory ? (
                                 <div className="space-y-4">
-                                    <div className="overflow-hidden bg-white/40 backdrop-blur-xl rounded-[2.5rem] border-2 border-slate-100 shadow-sm">
+                                    <div className="overflow-hidden bg-white/40 dark:bg-slate-900/40 backdrop-blur-xl rounded-[2.5rem] border-2 border-slate-100 dark:border-slate-800 shadow-sm">
                                         <table className="w-full text-left border-collapse">
                                             <thead>
-                                                <tr className="border-b border-slate-50">
+                                                <tr className="border-b border-slate-50 dark:border-slate-800">
                                                     <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest w-24">
                                                         Log
                                                     </th>
@@ -430,7 +430,7 @@ export default function Index({ todos, showingHistory }) {
                                                     </th>
                                                 </tr>
                                             </thead>
-                                            <tbody className="divide-y divide-slate-50">
+                                            <tbody className="divide-y divide-slate-50 dark:divide-slate-800">
                                                 {sortedDates.map((date) => {
                                                     const tasks =
                                                         groupedByDate[date];
@@ -452,7 +452,7 @@ export default function Index({ todos, showingHistory }) {
                                                             key={date}
                                                         >
                                                             <tr
-                                                                className={`group hover:bg-white transition-all cursor-pointer ${isExpanded ? "bg-slate-50/50" : ""}`}
+                                                                className={`group hover:bg-white dark:hover:bg-slate-800 transition-all cursor-pointer ${isExpanded ? "bg-slate-50/50 dark:bg-slate-800/50" : ""}`}
                                                                 onClick={() =>
                                                                     toggleDateExpansion(
                                                                         date,
@@ -461,7 +461,7 @@ export default function Index({ todos, showingHistory }) {
                                                             >
                                                                 <td className="px-8 py-6">
                                                                     <div
-                                                                        className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${rate === 100 ? "bg-emerald-50 text-emerald-500" : "bg-slate-50 text-slate-400"}`}
+                                                                        className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${rate === 100 ? "bg-emerald-50 dark:bg-emerald-900/20 text-emerald-500" : "bg-slate-50 dark:bg-slate-800 text-slate-400 dark:text-slate-500"}`}
                                                                     >
                                                                         {rate ===
                                                                         100 ? (
@@ -483,7 +483,7 @@ export default function Index({ todos, showingHistory }) {
                                                                     </div>
                                                                 </td>
                                                                 <td className="px-8 py-6">
-                                                                    <span className="font-black text-slate-900 tracking-tight text-lg">
+                                                                    <span className="font-black text-slate-900 dark:text-white tracking-tight text-lg">
                                                                         {date}
                                                                     </span>
                                                                 </td>
@@ -497,7 +497,7 @@ export default function Index({ todos, showingHistory }) {
                                                                 </td>
                                                                 <td className="px-8 py-6">
                                                                     <div className="flex items-center space-x-2">
-                                                                        <div className="flex-1 h-1.5 w-12 bg-slate-100 rounded-full overflow-hidden">
+                                                                        <div className="flex-1 h-1.5 w-12 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
                                                                             <div
                                                                                 className={`h-full rounded-full ${rate === 100 ? "bg-emerald-500" : "bg-amber-400"}`}
                                                                                 style={{
@@ -519,7 +519,7 @@ export default function Index({ todos, showingHistory }) {
                                                                             e.stopPropagation();
                                                                             setDateToDelete(date);
                                                                         }}
-                                                                        className="p-3 rounded-xl bg-slate-50 text-slate-400 hover:bg-rose-50 hover:text-rose-500 transition-all active:scale-95 group/del"
+                                                                        className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800 text-slate-400 dark:text-slate-500 hover:bg-rose-50 dark:hover:bg-rose-900/20 hover:text-rose-500 transition-all active:scale-95 group/del"
                                                                         title="Clear this day's history"
                                                                     >
                                                                         <Trash2 size={16} className="group-hover/del:animate-bounce" />
@@ -530,9 +530,9 @@ export default function Index({ todos, showingHistory }) {
                                                                 <tr>
                                                                     <td
                                                                         colSpan="5"
-                                                                        className="px-8 py-0 bg-slate-50/30"
+                                                                        className="px-8 py-0 bg-slate-50/30 dark:bg-slate-900/30"
                                                                     >
-                                                                        <div className="py-8 border-t border-slate-100 animate-in slide-in-from-top-2 duration-300">
+                                                                        <div className="py-8 border-t border-slate-100 dark:border-slate-800 animate-in slide-in-from-top-2 duration-300">
                                                                             <table className="w-full text-left border-collapse">
                                                                                 <tbody className="space-y-2">
                                                                                     {tasks.map(
@@ -543,7 +543,7 @@ export default function Index({ todos, showingHistory }) {
                                                                                                 key={
                                                                                                     todo.id
                                                                                                 }
-                                                                                                className="group/item hover:bg-white/80 transition-all cursor-pointer rounded-2xl"
+                                                                                                className="group/item hover:bg-white/80 dark:hover:bg-slate-800/80 transition-all cursor-pointer rounded-2xl"
                                                                                                 onClick={(
                                                                                                     e,
                                                                                                 ) => {
@@ -633,16 +633,16 @@ export default function Index({ todos, showingHistory }) {
                                             className="relative pl-12"
                                         >
                                             {/* Timeline line */}
-                                            <div className="absolute left-6 top-0 bottom-0 w-1 bg-slate-50 rounded-full"></div>
+                                            <div className="absolute left-6 top-0 bottom-0 w-1 bg-slate-50 dark:bg-slate-800 rounded-full"></div>
 
-                                            <div className="absolute left-0 top-0 w-12 h-12 rounded-2xl bg-white border-2 border-slate-50 flex items-center justify-center shadow-sm z-10">
+                                            <div className="absolute left-0 top-0 w-12 h-12 rounded-2xl bg-white dark:bg-slate-900 border-2 border-slate-50 dark:border-slate-800 flex items-center justify-center shadow-sm z-10">
                                                 <div className={slot.color}>
                                                     {slot.icon}
                                                 </div>
                                             </div>
 
                                             <div className="mb-6 pt-2">
-                                                <h4 className="text-xs font-black text-slate-900 uppercase tracking-[0.2em]">
+                                                <h4 className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-[0.2em]">
                                                     {slot.label}
                                                 </h4>
                                             </div>
@@ -667,8 +667,8 @@ export default function Index({ todos, showingHistory }) {
                                                             }}
                                                             className={`group p-6 rounded-[2.5rem] border-2 transition-all cursor-pointer flex items-center justify-between ${
                                                                 todo.is_completed
-                                                                    ? "bg-slate-50 border-slate-50 opacity-60"
-                                                                    : "bg-white border-slate-100 hover:border-emerald-200 hover:shadow-2xl hover:shadow-emerald-50/50"
+                                                                    ? "bg-slate-50 dark:bg-slate-800/50 border-slate-50 dark:border-slate-800 opacity-60"
+                                                                    : "bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800 hover:border-emerald-200 dark:hover:border-emerald-500/30 hover:shadow-2xl hover:shadow-emerald-50/50 dark:hover:shadow-none"
                                                             }`}
                                                             onClick={() =>
                                                                 toggleTodo(todo)
@@ -704,7 +704,7 @@ export default function Index({ todos, showingHistory }) {
                                                                 </div>
                                                                 <div>
                                                                     <h4
-                                                                        className={`text-xl font-black tracking-tight ${todo.is_completed ? "line-through text-slate-400" : "text-slate-800"}`}
+                                                                        className={`text-xl font-black tracking-tight ${todo.is_completed ? "line-through text-slate-400 dark:text-slate-600" : "text-slate-800 dark:text-white"}`}
                                                                     >
                                                                         {
                                                                             todo.title
@@ -729,7 +729,7 @@ export default function Index({ todos, showingHistory }) {
                                                                         </div>
                                                                         {todo.estimated_minutes >
                                                                             0 && (
-                                                                            <div className="text-[10px] font-black text-slate-300 uppercase tracking-widest flex items-center">
+                                                                            <div className="text-[10px] font-black text-slate-300 dark:text-slate-600 uppercase tracking-widest flex items-center">
                                                                                 <Clock
                                                                                     size={
                                                                                         10
@@ -762,8 +762,8 @@ export default function Index({ todos, showingHistory }) {
                                                                         }}
                                                                         className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${
                                                                             activeTask
-                                                                                ? "bg-slate-100 text-slate-300 cursor-not-allowed"
-                                                                                : "opacity-0 group-hover:opacity-100 bg-emerald-50 text-emerald-500 hover:bg-emerald-500 hover:text-white"
+                                                                                ? "bg-slate-100 dark:bg-slate-800 text-slate-300 dark:text-slate-600 cursor-not-allowed"
+                                                                                : "opacity-0 group-hover:opacity-100 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-500 hover:bg-emerald-500 hover:text-white"
                                                                         }`}
                                                                         title={
                                                                             activeTask
@@ -787,7 +787,7 @@ export default function Index({ todos, showingHistory }) {
                                                                                 todo,
                                                                             );
                                                                         }}
-                                                                        className="opacity-0 group-hover:opacity-100 w-10 h-10 rounded-xl bg-rose-50 text-rose-500 flex items-center justify-center transition-all hover:bg-rose-500 hover:text-white"
+                                                                        className="opacity-0 group-hover:opacity-100 w-10 h-10 rounded-xl bg-rose-50 dark:bg-rose-900/20 text-rose-500 flex items-center justify-center transition-all hover:bg-rose-500 hover:text-white"
                                                                     >
                                                                         <Trash2
                                                                             size={
@@ -807,7 +807,7 @@ export default function Index({ todos, showingHistory }) {
                                                                             todo,
                                                                         );
                                                                     }}
-                                                                    className="opacity-0 group-hover:opacity-100 w-10 h-10 rounded-xl bg-rose-50 text-rose-500 flex items-center justify-center transition-all hover:bg-rose-500 hover:text-white"
+                                                                    className="opacity-0 group-hover:opacity-100 w-10 h-10 rounded-xl bg-rose-50 dark:bg-rose-900/20 text-rose-500 flex items-center justify-center transition-all hover:bg-rose-500 hover:text-white"
                                                                 >
                                                                     <Trash2
                                                                         size={18}
@@ -819,7 +819,7 @@ export default function Index({ todos, showingHistory }) {
                                                 </AnimatePresence>
 
                                                 {slotTasks.length === 0 && (
-                                                    <div className="py-8 border-2 border-dashed border-slate-50 rounded-[2.5rem] flex items-center justify-center">
+                                                    <div className="py-8 border-2 border-dashed border-slate-50 dark:border-slate-800 rounded-[2.5rem] flex items-center justify-center">
                                                         <p className="text-[10px] font-black text-slate-200 uppercase tracking-widest">
                                                             No tasks scheduled
                                                         </p>
@@ -834,7 +834,7 @@ export default function Index({ todos, showingHistory }) {
                             {todos?.next_page_url && (
                                 <button
                                     onClick={loadMore}
-                                    className="w-full py-6 flex items-center justify-center space-x-2 bg-slate-50 border-2 border-dashed border-slate-200 rounded-[2.5rem] text-[10px] font-black text-slate-400 uppercase tracking-widest hover:text-emerald-500 hover:border-emerald-200 hover:bg-emerald-50 transition-all active:scale-95"
+                                    className="w-full py-6 flex items-center justify-center space-x-2 bg-slate-50 dark:bg-slate-800/50 border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-[2.5rem] text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest hover:text-emerald-500 hover:border-emerald-200 dark:hover:border-emerald-500/30 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 transition-all active:scale-95"
                                 >
                                     <ArrowRight size={16} />
                                     <span>Load More Sprint Actions</span>
@@ -855,17 +855,17 @@ export default function Index({ todos, showingHistory }) {
                     <motion.div
                         initial={{ scale: 0.9, opacity: 0 }}
                         animate={{ scale: 1, opacity: 1 }}
-                        className="relative w-full max-w-lg bg-white rounded-[3.5rem] p-10 border-4 border-white shadow-2xl"
+                        className="relative w-full max-w-lg bg-white dark:bg-slate-900 rounded-[3.5rem] p-10 border-4 border-white dark:border-slate-800 shadow-2xl"
                     >
                         <div className="flex justify-between items-start mb-8">
-                            <h2 className="text-3xl font-black text-slate-900 tracking-tighter">
+                            <h2 className="text-3xl font-black text-slate-900 dark:text-white tracking-tighter">
                                 Next Action
                                 <span className="text-emerald-500">.</span>
                             </h2>
                             <button
                                 onClick={() => setShowModal(false)}
                                 type="button"
-                                className="w-10 h-10 bg-slate-50 hover:bg-rose-50 text-slate-400 hover:text-rose-500 rounded-xl flex items-center justify-center transition-all group shadow-sm shrink-0"
+                                className="w-10 h-10 bg-slate-50 dark:bg-slate-800 hover:bg-rose-50 dark:hover:bg-rose-900/20 text-slate-400 dark:text-slate-500 hover:text-rose-500 rounded-xl flex items-center justify-center transition-all group shadow-sm shrink-0"
                             >
                                 <svg
                                     className="w-5 h-5 group-hover:rotate-90 transition-transform duration-300"
@@ -893,7 +893,7 @@ export default function Index({ todos, showingHistory }) {
                                         setData("title", e.target.value)
                                     }
                                     placeholder="e.g., Architect the system"
-                                    className="w-full px-6 py-4 rounded-2xl border-2 border-slate-100 font-bold text-lg focus:border-emerald-500 outline-none transition-all"
+                                    className="w-full px-6 py-4 rounded-2xl border-2 border-slate-100 dark:border-slate-800 bg-transparent dark:text-white font-bold text-lg focus:border-emerald-500 outline-none transition-all"
                                 />
                             </div>
 
@@ -912,8 +912,8 @@ export default function Index({ todos, showingHistory }) {
                                                 }
                                                 className={`flex-1 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest border-2 transition-all ${
                                                     data.priority === p
-                                                        ? "bg-slate-900 text-white border-slate-900 shadow-lg shadow-slate-200"
-                                                        : "bg-white text-slate-400 border-slate-100 hover:border-slate-200"
+                                                        ? "bg-slate-900 dark:bg-emerald-500 text-white border-slate-900 dark:border-emerald-500 shadow-lg shadow-slate-200 dark:shadow-none"
+                                                        : "bg-white dark:bg-slate-800 text-slate-400 dark:text-slate-500 border-slate-100 dark:border-slate-700 hover:border-slate-200 dark:hover:border-slate-600"
                                                 }`}
                                             >
                                                 {p}
@@ -939,8 +939,8 @@ export default function Index({ todos, showingHistory }) {
                                                 }
                                                 className={`flex-1 py-3 rounded-xl flex items-center justify-center transition-all ${
                                                     data.time_slot === s
-                                                        ? "bg-emerald-500 text-white shadow-lg shadow-emerald-100"
-                                                        : "bg-slate-50 text-slate-300 hover:text-slate-500"
+                                                        ? "bg-emerald-500 text-white shadow-lg shadow-emerald-100 dark:shadow-none"
+                                                        : "bg-slate-50 dark:bg-slate-800 text-slate-300 dark:text-slate-600 hover:text-slate-500 dark:hover:text-slate-400"
                                                 }`}
                                             >
                                                 {s === "morning" ? (
@@ -969,14 +969,14 @@ export default function Index({ todos, showingHistory }) {
                                             e.target.value,
                                         )
                                     }
-                                    className="w-full px-6 py-4 rounded-2xl border-2 border-slate-100 font-bold outline-none focus:border-emerald-500 transition-all"
+                                    className="w-full px-6 py-4 rounded-2xl border-2 border-slate-100 dark:border-slate-800 bg-transparent dark:text-white font-bold outline-none focus:border-emerald-500 transition-all"
                                 />
                             </div>
 
                             <button
                                 type="submit"
                                 disabled={processing}
-                                className="w-full bg-slate-900 text-white py-5 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-emerald-500 transition-all shadow-2xl shadow-slate-200 mt-4 active:scale-95"
+                                className="w-full bg-slate-900 dark:bg-emerald-500 text-white py-5 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-emerald-500 dark:hover:bg-emerald-600 transition-all shadow-2xl shadow-slate-200 dark:shadow-none mt-4 active:scale-95"
                             >
                                 Launch Action
                             </button>

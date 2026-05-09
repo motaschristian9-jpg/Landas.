@@ -11,3 +11,12 @@
         scrollbar-width: none;
     }
 }
+
+html {
+    transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out, border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+/* Optional: Prevent transitions on initial load to avoid flashing */
+.no-transitions * {
+    transition: none !important;
+}

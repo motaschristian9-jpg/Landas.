@@ -36,6 +36,7 @@ Route::middleware('auth')->group(function () {
     
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::patch('/profile/theme', [ProfileController::class, 'updateTheme'])->name('profile.theme.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::get('/mastery', [MasteryController::class, 'index'])->name('mastery.index');
     Route::post('/guidance/{guidance}/acknowledge', [\App\Http\Controllers\GuidanceController::class, 'acknowledge'])->name('guidance.acknowledge');

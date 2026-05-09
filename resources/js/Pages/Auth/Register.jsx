@@ -68,22 +68,22 @@ export default function Register() {
             <Head title="Begin Your Journey" />
 
             <div className="mb-4 text-center">
-                <h2 className="text-3xl font-extrabold text-slate-800 tracking-tighter mb-1">Join Landas<span className="text-emerald-500">.</span></h2>
-                <p className="text-slate-400 font-bold text-[10px] uppercase tracking-[0.3em]">Start your path to mastery</p>
+                <h2 className="text-3xl font-extrabold text-slate-800 dark:text-white tracking-tighter mb-1 transition-colors duration-500">Join Landas<span className="text-emerald-500">.</span></h2>
+                <p className="text-slate-400 dark:text-slate-500 font-bold text-[10px] uppercase tracking-[0.3em]">Start your path to mastery</p>
             </div>
 
             <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-3">
                 <div>
-                    <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-2 ml-1">Full Name</label>
+                    <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500 mb-2 ml-1">Full Name</label>
                     <div className="relative group">
-                        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-300 group-focus-within:text-emerald-500 transition-colors">
+                        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-300 dark:text-slate-600 group-focus-within:text-emerald-500 transition-colors">
                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5"><path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
                         </div>
                         <input
                             {...register('name')}
                             placeholder="John Doe"
-                            className={`w-full pl-12 pr-5 py-3 rounded-[1.5rem] border-2 bg-slate-50/50 focus:bg-white outline-none transition-all font-bold text-slate-700 text-sm shadow-sm ${
-                                errors.name ? 'border-red-100 focus:border-red-200 focus:ring-red-500/5' : 'border-slate-50 focus:border-emerald-500/20 focus:ring-emerald-500/5'
+                            className={`w-full pl-12 pr-5 py-3 rounded-[1.5rem] border-2 bg-slate-50/50 dark:bg-slate-900/50 focus:bg-white dark:focus:bg-slate-900 outline-none transition-all font-bold text-slate-700 dark:text-white text-sm shadow-sm ${
+                                errors.name ? 'border-red-100 dark:border-red-900/30 focus:border-red-200 focus:ring-red-500/5' : 'border-slate-50 dark:border-slate-800 focus:border-emerald-500/20 focus:ring-emerald-500/5'
                             }`}
                         />
                     </div>
@@ -91,17 +91,17 @@ export default function Register() {
                 </div>
 
                 <div>
-                    <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-2 ml-1">Email Address</label>
+                    <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500 mb-2 ml-1">Email Address</label>
                     <div className="relative group">
-                        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-300 group-focus-within:text-emerald-500 transition-colors">
+                        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-300 dark:text-slate-600 group-focus-within:text-emerald-500 transition-colors">
                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5"><path d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.206"/></svg>
                         </div>
                         <input
                             {...register('email')}
                             type="email"
                             placeholder="your@email.com"
-                            className={`w-full pl-12 pr-5 py-3 rounded-[1.5rem] border-2 bg-slate-50/50 focus:bg-white outline-none transition-all font-bold text-slate-700 text-sm shadow-sm ${
-                                errors.email ? 'border-red-100 focus:border-red-200 focus:ring-red-500/5' : 'border-slate-50 focus:border-emerald-500/20 focus:ring-emerald-500/5'
+                            className={`w-full pl-12 pr-5 py-3 rounded-[1.5rem] border-2 bg-slate-50/50 dark:bg-slate-900/50 focus:bg-white dark:focus:bg-slate-900 outline-none transition-all font-bold text-slate-700 dark:text-white text-sm shadow-sm ${
+                                errors.email ? 'border-red-100 dark:border-red-900/30 focus:border-red-200 focus:ring-red-500/5' : 'border-slate-50 dark:border-slate-800 focus:border-emerald-500/20 focus:ring-emerald-500/5'
                             }`}
                         />
                     </div>
@@ -110,48 +110,48 @@ export default function Register() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     <div>
-                        <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-2 ml-1">Password</label>
+                        <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500 mb-2 ml-1">Password</label>
                         <div className="relative group">
-                            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-300 group-focus-within:text-emerald-500 transition-colors">
+                            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-300 dark:text-slate-600 group-focus-within:text-emerald-500 transition-colors">
                                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5"><path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-11V7a4 4 0 00-8 0v4h8z"/></svg>
                             </div>
                             <input
                                 {...register('password')}
                                 type={showPassword ? 'text' : 'password'}
                                 placeholder="••••••••"
-                                className={`w-full pl-12 pr-12 py-3 rounded-[1.5rem] border-2 bg-slate-50/50 focus:bg-white outline-none transition-all font-bold text-slate-700 text-sm shadow-sm ${
-                                    errors.password ? 'border-red-100 focus:border-red-200 focus:ring-red-500/5' : 'border-slate-50 focus:border-emerald-500/20 focus:ring-emerald-500/5'
+                                className={`w-full pl-12 pr-12 py-3 rounded-[1.5rem] border-2 bg-slate-50/50 dark:bg-slate-900/50 focus:bg-white dark:focus:bg-slate-900 outline-none transition-all font-bold text-slate-700 dark:text-white text-sm shadow-sm ${
+                                    errors.password ? 'border-red-100 dark:border-red-900/30 focus:border-red-200 focus:ring-red-500/5' : 'border-slate-50 dark:border-slate-800 focus:border-emerald-500/20 focus:ring-emerald-500/5'
                                 }`}
                             />
                             <button
                                 type="button"
                                 tabIndex="-1"
                                 onClick={() => setShowPassword(!showPassword)}
-                                className="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-300 hover:text-emerald-500 transition-colors"
+                                className="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-300 dark:text-slate-600 hover:text-emerald-500 dark:hover:text-emerald-400 transition-colors"
                             >
                                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                             </button>
                         </div>
                     </div>
                     <div>
-                        <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-2 ml-1">Confirm Password</label>
+                        <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500 mb-2 ml-1">Confirm Password</label>
                         <div className="relative group">
-                            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-300 group-focus-within:text-emerald-500 transition-colors">
+                            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-300 dark:text-slate-600 group-focus-within:text-emerald-500 transition-colors">
                                 <ShieldCheck className="w-5 h-5" strokeWidth={2.5} />
                             </div>
                             <input
                                 {...register('password_confirmation')}
                                 type={showConfirmPassword ? 'text' : 'password'}
                                 placeholder="••••••••"
-                                className={`w-full pl-12 pr-12 py-3 rounded-[1.5rem] border-2 bg-slate-50/50 focus:bg-white outline-none transition-all font-bold text-slate-700 text-sm shadow-sm ${
-                                    errors.password_confirmation ? 'border-red-100 focus:border-red-200 focus:ring-red-500/5' : 'border-slate-50 focus:border-emerald-500/20 focus:ring-emerald-500/5'
+                                className={`w-full pl-12 pr-12 py-3 rounded-[1.5rem] border-2 bg-slate-50/50 dark:bg-slate-900/50 focus:bg-white dark:focus:bg-slate-900 outline-none transition-all font-bold text-slate-700 dark:text-white text-sm shadow-sm ${
+                                    errors.password_confirmation ? 'border-red-100 dark:border-red-900/30 focus:border-red-200 focus:ring-red-500/5' : 'border-slate-50 dark:border-slate-800 focus:border-emerald-500/20 focus:ring-emerald-500/5'
                                 }`}
                             />
                             <button
                                 type="button"
                                 tabIndex="-1"
                                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                                className="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-300 hover:text-emerald-500 transition-colors"
+                                className="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-300 dark:text-slate-600 hover:text-emerald-500 dark:hover:text-emerald-400 transition-colors"
                             >
                                 {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                             </button>
@@ -163,7 +163,7 @@ export default function Register() {
                 <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full py-4 bg-emerald-500 hover:bg-emerald-600 text-white font-black text-xs uppercase tracking-[0.2em] rounded-[1.5rem] shadow-xl shadow-emerald-200/50 transition-all transform active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full py-4 bg-emerald-500 hover:bg-emerald-600 text-white font-black text-xs uppercase tracking-[0.2em] rounded-[1.5rem] shadow-xl shadow-emerald-200/50 dark:shadow-none transition-all transform active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                     {isSubmitting ? 'Creating Path...' : 'Create Account'}
                 </button>
