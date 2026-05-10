@@ -63,7 +63,7 @@ export default function Login({ status, canResetPassword }) {
             <Head title="Welcome Back" />
 
             {status && (
-                <div className="mb-6 p-4 bg-emerald-50 rounded-2xl border-2 border-emerald-100 text-sm font-bold text-emerald-600">
+                <div className="mb-6 p-4 bg-emerald-50 dark:bg-emerald-900/10 rounded-2xl border-2 border-emerald-100 dark:border-emerald-900/20 text-sm font-bold text-emerald-600 dark:text-emerald-400">
                     {status}
                 </div>
             )}

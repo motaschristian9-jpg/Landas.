@@ -55,35 +55,35 @@ export default function ForgotPassword({ status }) {
             <Head title="Reset Your Path" />
 
             {status && (
-                <div className="mb-6 p-4 bg-emerald-50 rounded-2xl border-2 border-emerald-100 text-sm font-bold text-emerald-600">
+                <div className="mb-6 p-4 bg-emerald-50 dark:bg-emerald-900/10 rounded-2xl border-2 border-emerald-100 dark:border-emerald-900/20 text-sm font-bold text-emerald-600 dark:text-emerald-400">
                     {status}
                 </div>
             )}
 
             <div className="mb-4 text-center">
-                <h2 className="text-3xl font-extrabold text-slate-800 tracking-tighter mb-1">Reset Path<span className="text-emerald-500">.</span></h2>
-                <p className="text-slate-400 font-bold text-[10px] uppercase tracking-[0.3em]">We'll help you find your way back</p>
+                <h2 className="text-3xl font-extrabold text-slate-800 dark:text-white tracking-tighter mb-1">Reset Path<span className="text-emerald-500">.</span></h2>
+                <p className="text-slate-400 dark:text-slate-500 font-bold text-[10px] uppercase tracking-[0.3em]">We'll help you find your way back</p>
             </div>
 
             <div className="mb-6 px-1 text-center">
-                <p className="text-[11px] font-medium text-slate-500 leading-relaxed">
+                <p className="text-[11px] font-medium text-slate-500 dark:text-slate-400 leading-relaxed">
                     Forgot your password? No problem. Just let us know your email address and we will email you a password reset link.
                 </p>
             </div>
 
             <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-4">
                 <div>
-                    <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-2 ml-1">Email Address</label>
+                    <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500 mb-2 ml-1">Email Address</label>
                     <div className="relative group">
-                        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-300 group-focus-within:text-emerald-500 transition-colors">
+                        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-300 dark:text-slate-600 group-focus-within:text-emerald-500 transition-colors">
                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5"><path d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.206"/></svg>
                         </div>
                         <input
                             {...register('email')}
                             type="email"
                             placeholder="your@email.com"
-                            className={`w-full pl-12 pr-5 py-3 rounded-[1.5rem] border-2 bg-slate-50/50 focus:bg-white outline-none transition-all font-bold text-slate-700 text-sm shadow-sm ${
-                                errors.email ? 'border-red-100 focus:border-red-200 focus:ring-red-500/5' : 'border-slate-50 focus:border-emerald-500/20 focus:ring-emerald-500/5'
+                            className={`w-full pl-12 pr-5 py-3 rounded-[1.5rem] border-2 bg-slate-50/50 dark:bg-slate-900/50 focus:bg-white dark:focus:bg-slate-900 outline-none transition-all font-bold text-slate-700 dark:text-white text-sm shadow-sm ${
+                                errors.email ? 'border-red-100 dark:border-red-900/50 focus:border-red-200 focus:ring-red-500/5' : 'border-slate-50 dark:border-slate-800 focus:border-emerald-500/20 focus:ring-emerald-500/5'
                             }`}
                         />
                     </div>
@@ -93,7 +93,7 @@ export default function ForgotPassword({ status }) {
                 <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full py-4 bg-emerald-500 hover:bg-emerald-600 text-white font-black text-xs uppercase tracking-[0.2em] rounded-[1.5rem] shadow-xl shadow-emerald-200/50 transition-all transform active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full py-4 bg-emerald-500 hover:bg-emerald-600 text-white font-black text-xs uppercase tracking-[0.2em] rounded-[1.5rem] shadow-xl shadow-emerald-200/50 dark:shadow-none transition-all transform active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                     {isSubmitting ? 'Sending Link...' : 'Email Reset Link'}
                 </button>
@@ -102,7 +102,7 @@ export default function ForgotPassword({ status }) {
                     <Link
                         href={route('login')}
                         tabIndex="-1"
-                        className="inline-flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-widest hover:text-emerald-500 transition-colors group"
+                        className="inline-flex items-center gap-2 text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest hover:text-emerald-500 transition-colors group"
                     >
                         <ArrowLeft size={12} className="group-hover:-translate-x-1 transition-transform" />
                         Back to Login

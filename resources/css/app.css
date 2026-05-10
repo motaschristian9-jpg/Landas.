@@ -20,3 +20,23 @@ html {
 .no-transitions * {
     transition: none !important;
 }
+
+/* Chrome, Safari, Edge autofill styling */
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus, 
+input:-webkit-autofill:active {
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: inherit !important;
+    transition: background-color 5000s ease-in-out 0s;
+}
+
+/* Dark mode autofill fix */
+.dark input:-webkit-autofill,
+.dark input:-webkit-autofill:hover, 
+.dark input:-webkit-autofill:focus, 
+.dark input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 1000px #020617 inset !important; /* matches slate-950 background */
+    -webkit-text-fill-color: white !important;
+    caret-color: white;
+}
