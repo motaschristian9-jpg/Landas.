@@ -1,24 +1,65 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useRef, useState, useEffect, useMemo } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Target, ChevronRight, Compass } from 'lucide-react';
-import { Link } from '@inertiajs/react';
+import { Link, router } from '@inertiajs/react';
 
-export default function VisionHub({ goals, nextUrl, onLoadMore }) {
+export default function VisionHub({ goals }) {
+    const [isDragging, setIsDragging] = useState(false);
+    const [prevPage, setPrevPage] = useState(goals.current_page);
+    const [direction, setDirection] = useState(0); // 1 for next, -1 for prev
+
+    const navigate = (url) => {
+        if (!url) return;
+        
+        // Determine direction based on current vs target page if possible
+        // But Inertia URLs don't always make it easy to tell. 
+        // We'll just assume next/prev based on the button clicked.
+        router.visit(url, {
+            preserveState: true,
+            preserveScroll: true,
+        });
+    };
+
+    useEffect(() => {
+        if (goals.current_page > prevPage) setDirection(1);
+        else if (goals.current_page < prevPage) setDirection(-1);
+        setPrevPage(goals.current_page);
+    }, [goals.current_page]);
+
     const calculateProgress = (goal) => {
         if (!goal.milestones?.length) return 0;
         const completed = goal.milestones.filter(m => m.is_completed).length;
         return Math.round((completed / goal.milestones.length) * 100);
     };
 
-    // Show up to 3 goals (prioritize in-progress ones)
-    const activeGoals = goals.sort((a, b) => {
-        const aProg = calculateProgress(a);
-        const bProg = calculateProgress(b);
-        // Put completed goals at the bottom
-        if (aProg === 100 && bProg !== 100) return 1;
-        if (aProg !== 100 && bProg === 100) return -1;
-        return 0;
-    });
+    // Show in-progress ones first
+    const sortedGoals = useMemo(() => {
+        return [...goals.data].sort((a, b) => {
+            const aProg = calculateProgress(a);
+            const bProg = calculateProgress(b);
+            if (aProg === 100 && bProg !== 100) return 1;
+            if (aProg !== 100 && bProg === 100) return -1;
+            return 0;
+        });
+    }, [goals.data]);
+
+    const variants = {
+        enter: (dir) => ({
+            x: dir > 0 ? 100 : -100,
+            opacity: 0,
+            scale: 0.95
+        }),
+        center: {
+            x: 0,
+            opacity: 1,
+            scale: 1
+        },
+        exit: (dir) => ({
+            x: dir > 0 ? -100 : 100,
+            opacity: 0,
+            scale: 0.95
+        })
+    };
 
     return (
         <div className="bg-white dark:bg-slate-900 rounded-[3rem] border-2 border-slate-100 dark:border-slate-800 shadow-xl shadow-slate-100/50 dark:shadow-none p-6 md:p-8">
@@ -36,7 +77,7 @@ export default function VisionHub({ goals, nextUrl, onLoadMore }) {
                 </Link>
             </div>
 
-            {goals.length === 0 ? (
+            {goals.data.length === 0 ? (
                 <div className="text-center py-10 px-4 border-2 border-dashed border-slate-100 dark:border-slate-800 rounded-[2.5rem] bg-slate-50/50 dark:bg-slate-800/20">
                     <div className="w-16 h-16 bg-white dark:bg-slate-800 rounded-[1.5rem] flex items-center justify-center text-emerald-400 mx-auto mb-4 shadow-sm">
                         <Target size={28} strokeWidth={2.5} />
@@ -48,53 +89,113 @@ export default function VisionHub({ goals, nextUrl, onLoadMore }) {
                     </Link>
                 </div>
             ) : (
-                <div className="space-y-4">
-                    {activeGoals.map((goal, idx) => {
-                        const progress = calculateProgress(goal);
-                        return (
-                            <Link key={goal.id} href={route('mastery.index')} className="block group">
-                                <div className="bg-slate-50 dark:bg-slate-800/50 rounded-[2rem] p-5 border-2 border-transparent group-hover:border-emerald-100 dark:group-hover:border-emerald-500/30 group-hover:bg-white dark:group-hover:bg-slate-800 transition-all shadow-sm group-hover:shadow-lg dark:group-hover:shadow-none">
-                                    <div className="flex items-center justify-between mb-4">
-                                        <div className="flex items-center space-x-4">
-                                            <div className="w-12 h-12 rounded-xl bg-white dark:bg-slate-700 flex items-center justify-center text-slate-400 dark:text-slate-500 group-hover:text-emerald-500 group-hover:bg-emerald-50 dark:group-hover:bg-emerald-900/20 transition-colors shadow-sm dark:shadow-none">
-                                                <Target size={20} strokeWidth={2.5} />
-                                            </div>
-                                            <div>
-                                                <h3 className="font-black text-slate-800 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors leading-tight line-clamp-1">{goal.title}</h3>
-                                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">
-                                                    {goal.milestones?.filter(m => m.is_completed).length || 0} / {goal.milestones?.length || 0} Steps
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <span className={`text-sm font-black ${progress === 100 ? 'text-emerald-500' : 'text-slate-400'}`}>{progress}%</span>
-                                    </div>
-                                    <div className="w-full h-2 bg-slate-200/60 dark:bg-slate-800 rounded-full overflow-hidden">
-                                        <motion.div 
-                                            initial={{ width: 0 }}
-                                            animate={{ width: `${progress}%` }}
-                                            className="h-full bg-emerald-500 rounded-full"
-                                            transition={{ duration: 1, delay: idx * 0.1 }}
-                                        />
-                                    </div>
-                                </div>
-                            </Link>
-                        );
-                    })}
-
-                    {nextUrl && (
-                        <div className="pt-2">
-                            <button 
-                                onClick={onLoadMore}
-                                className="w-full py-4 flex items-center justify-center text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest hover:text-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 rounded-2xl transition-all"
+                <div className="relative">
+                    <div className="overflow-hidden">
+                        <AnimatePresence mode="wait" custom={direction}>
+                            <motion.div 
+                                key={goals.current_page}
+                                custom={direction}
+                                variants={variants}
+                                initial="enter"
+                                animate="center"
+                                exit="exit"
+                                transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                                className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 pb-4 px-1"
                             >
-                                Load More Visions
-                            </button>
-                        </div>
-                    )}
+                                {sortedGoals.map((goal, idx) => {
+                                    const progress = calculateProgress(goal);
+                                    return (
+                                        <Link 
+                                            key={goal.id} 
+                                            href={route('mastery.index')} 
+                                            className="block group h-full"
+                                        >
+                                            <div className="bg-slate-50 dark:bg-slate-800/50 rounded-[2rem] md:rounded-[2.5rem] p-4 md:p-6 border-2 border-transparent group-hover:border-emerald-100 dark:group-hover:border-emerald-500/30 group-hover:bg-white dark:group-hover:bg-slate-800 transition-all shadow-sm group-hover:shadow-lg dark:group-hover:shadow-none h-full flex flex-col">
+                                                <div className="flex items-center justify-between mb-4 md:mb-6">
+                                                    <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-white dark:bg-slate-700 flex items-center justify-center text-slate-400 dark:text-slate-500 group-hover:text-emerald-500 group-hover:bg-emerald-50 dark:group-hover:bg-emerald-900/20 transition-colors shadow-sm dark:shadow-none">
+                                                        <Target size={18} md:size={20} strokeWidth={2.5} />
+                                                    </div>
+                                                    <span className={`text-[10px] md:text-sm font-black ${progress === 100 ? 'text-emerald-500' : 'text-slate-400'}`}>{progress}%</span>
+                                                </div>
+                                                
+                                                <div className="flex-1">
+                                                    <h3 className="font-black text-xs md:text-base text-slate-800 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors leading-tight line-clamp-2 mb-1 md:mb-2">{goal.title}</h3>
+                                                    <p className="text-[8px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                                                        {goal.milestones?.filter(m => m.is_completed).length || 0} / {goal.milestones?.length || 0} Steps
+                                                    </p>
+                                                </div>
 
-                    <div className="pt-6 pb-2 text-center">
+                                                <div className="w-full h-1.5 md:h-2 bg-slate-200/60 dark:bg-slate-800 rounded-full overflow-hidden mt-4 md:mt-6">
+                                                    <motion.div 
+                                                        initial={{ width: 0 }}
+                                                        animate={{ width: `${progress}%` }}
+                                                        className="h-full bg-emerald-500 rounded-full"
+                                                        transition={{ duration: 1, delay: 0.2 }}
+                                                    />
+                                                </div>
+                                            </div>
+                                        </Link>
+                                    );
+                                })}
+                                {/* Fill empty slots to keep grid stable if < 4 goals */}
+                                {sortedGoals.length < 4 && Array.from({ length: 4 - sortedGoals.length }).map((_, i) => (
+                                    <div key={`empty-${i}`} className="hidden md:block opacity-0 h-full"></div>
+                                ))}
+                            </motion.div>
+                        </AnimatePresence>
+                    </div>
+
+                    {/* Pagination Navigation */}
+                    <div className="flex items-center justify-center space-x-6 mt-6">
+                        <motion.button 
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.9 }}
+                            onClick={() => {
+                                setDirection(-1);
+                                navigate(goals.prev_page_url);
+                            }}
+                            disabled={!goals.prev_page_url}
+                            className={`w-12 h-12 rounded-xl flex items-center justify-center border-2 transition-all ${
+                                goals.prev_page_url 
+                                ? 'border-slate-100 dark:border-slate-800 text-slate-900 dark:text-white hover:border-emerald-500 hover:text-emerald-500' 
+                                : 'border-slate-50 dark:border-slate-900 text-slate-200 dark:text-slate-800 cursor-not-allowed opacity-50'
+                            }`}
+                        >
+                            <ChevronRight size={20} className="rotate-180" />
+                        </motion.button>
+
+                        <div className="flex items-center space-x-2">
+                            {[...Array(goals.last_page)].map((_, i) => (
+                                <div 
+                                    key={i} 
+                                    className={`h-1.5 rounded-full transition-all duration-500 ${
+                                        goals.current_page === i + 1 ? 'w-6 bg-emerald-500' : 'w-1.5 bg-slate-200 dark:bg-slate-800'
+                                    }`}
+                                />
+                            ))}
+                        </div>
+
+                        <motion.button 
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.9 }}
+                            onClick={() => {
+                                setDirection(1);
+                                navigate(goals.next_page_url);
+                            }}
+                            disabled={!goals.next_page_url}
+                            className={`w-12 h-12 rounded-xl flex items-center justify-center border-2 transition-all ${
+                                goals.next_page_url 
+                                ? 'border-slate-100 dark:border-slate-800 text-slate-900 dark:text-white hover:border-emerald-500 hover:text-emerald-500' 
+                                : 'border-slate-50 dark:border-slate-900 text-slate-200 dark:text-slate-800 cursor-not-allowed opacity-50'
+                            }`}
+                        >
+                            <ChevronRight size={20} />
+                        </motion.button>
+                    </div>
+
+                    <div className="mt-8 pt-6 border-t border-slate-50 dark:border-slate-800 text-center">
                         <Link href={route('mastery.index')} className="inline-flex items-center space-x-1 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] hover:text-emerald-500 transition-colors">
-                            <span>Open Mastery Hub</span>
+                            <span>Manage Mastery Hub</span>
                             <ChevronRight size={14} />
                         </Link>
                     </div>

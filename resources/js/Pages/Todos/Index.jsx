@@ -655,15 +655,15 @@ export default function Index({ todos, showingHistory }) {
                                                             layout
                                                             initial={{
                                                                 opacity: 0,
-                                                                x: -20,
+                                                                y: 20,
                                                             }}
                                                             animate={{
                                                                 opacity: 1,
-                                                                x: 0,
+                                                                y: 0,
                                                             }}
                                                             exit={{
                                                                 opacity: 0,
-                                                                x: 20,
+                                                                scale: 0.95,
                                                             }}
                                                             className={`group p-6 rounded-[2.5rem] border-2 transition-all cursor-pointer flex items-center justify-between ${
                                                                 todo.is_completed

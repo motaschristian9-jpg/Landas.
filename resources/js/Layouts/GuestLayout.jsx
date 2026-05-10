@@ -120,7 +120,7 @@ export default function GuestLayout({ children }) {
             {/* Right Side: Auth Forms (40%) */}
             <div className="flex-1 md:w-[40%] flex flex-col bg-white dark:bg-slate-950 p-8 md:p-16 relative overflow-hidden transition-colors duration-500">
                 <div className="md:hidden flex justify-center mb-12">
-                    <div className="w-12 h-12 bg-emerald-500 rounded-xl flex items-center justify-center">
+                    <div className="w-12 h-12 bg-emerald-500 rounded-xl flex items-center justify-center shadow-lg shadow-emerald-500/20">
                         <div className="w-6 h-6 bg-white rounded-md"></div>
                     </div>
                 </div>
@@ -148,7 +148,7 @@ export default function GuestLayout({ children }) {
                 </div>
 
                 <div className="mt-12 text-center md:text-left">
-                    <p className="text-[9px] font-black text-slate-300 uppercase tracking-[0.4em]">
+                    <p className="text-[9px] font-black text-slate-300 dark:text-slate-600 uppercase tracking-[0.4em]">
                         © {new Date().getFullYear()} Landas Productivity Systems
                     </p>
                 </div>

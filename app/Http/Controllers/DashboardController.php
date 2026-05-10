@@ -62,7 +62,7 @@ class DashboardController extends Controller
         ];
 
         // 4. Pillar 3: Goal Progress
-        $goals = $user->goals()->with('milestones')->paginate(3, ['*'], 'goals_page')->through(function($goal) use ($goalService) {
+        $goals = $user->goals()->with('milestones')->paginate(4, ['*'], 'goals_page')->through(function($goal) use ($goalService) {
             return [
                 'id' => $goal->id,
                 'title' => $goal->title,

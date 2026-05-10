@@ -20,7 +20,6 @@ export default function Dashboard({
     const [dismissedSuggestion, setDismissedSuggestion] = useState(false);
 
     const [localTodos, setLocalTodos] = useState(todayTodos.data || []);
-    const [localGoals, setLocalGoals] = useState(goals.data || []);
 
     useEffect(() => {
         if (todayTodos.current_page > 1) {
@@ -35,16 +34,6 @@ export default function Dashboard({
 
 
 
-    useEffect(() => {
-        if (goals.current_page > 1) {
-            setLocalGoals(prev => {
-                const newItems = goals.data.filter(item => !prev.some(p => p.id === item.id));
-                return [...prev, ...newItems];
-            });
-        } else {
-            setLocalGoals(goals.data || []);
-        }
-    }, [goals]);
 
     const loadMore = (resource, nextUrl) => {
         if (!nextUrl) return;
@@ -149,9 +138,7 @@ export default function Dashboard({
                         <div className="w-12 h-[3px] bg-slate-200 dark:bg-slate-800 rounded-full"></div>
                     </div>
                     <VisionHub 
-                        goals={localGoals} 
-                        nextUrl={goals.next_page_url} 
-                        onLoadMore={() => loadMore('goals', goals.next_page_url)} 
+                        goals={goals} 
                     />
                 </div>
 
