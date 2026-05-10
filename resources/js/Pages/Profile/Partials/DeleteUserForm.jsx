@@ -4,10 +4,11 @@ import InputLabel from '@/Components/InputLabel';
 import Modal from '@/Components/Modal';
 import SecondaryButton from '@/Components/SecondaryButton';
 import TextInput from '@/Components/TextInput';
-import { useForm } from '@inertiajs/react';
+import { useForm, usePage } from '@inertiajs/react';
 import { useRef, useState } from 'react';
 
 export default function DeleteUserForm({ className = '' }) {
+    const user = usePage().props.auth.user;
     const [confirmingUserDeletion, setConfirmingUserDeletion] = useState(false);
     const passwordInput = useRef();
 
@@ -33,7 +34,11 @@ export default function DeleteUserForm({ className = '' }) {
         destroy(route('profile.destroy'), {
             preserveScroll: true,
             onSuccess: () => closeModal(),
-            onError: () => passwordInput.current.focus(),
+            onError: (errors) => {
+                if (passwordInput.current) {
+                    passwordInput.current.focus();
+                }
+            },
             onFinish: () => reset(),
         });
     };
@@ -83,7 +88,8 @@ export default function DeleteUserForm({ className = '' }) {
                         </h2>
 
                         <p className="text-slate-400 font-bold text-base leading-relaxed mb-8">
-                            This action is irreversible. All your data will be purged. Please enter your password to confirm.
+                            This action is irreversible. All your data will be purged. <br/>
+                            Please type <span className="text-rose-500 font-black">DELETE MY ACCOUNT</span> to confirm.
                         </p>
 
                         <div className="w-full mb-8">
@@ -95,7 +101,7 @@ export default function DeleteUserForm({ className = '' }) {
 
                             <TextInput
                                 id="password"
-                                type="password"
+                                type="text"
                                 name="password"
                                 ref={passwordInput}
                                 value={data.password}
@@ -104,7 +110,7 @@ export default function DeleteUserForm({ className = '' }) {
                                 }
                                 className="block w-full !rounded-2xl !border-slate-100 dark:!border-slate-800 !bg-slate-50/50 dark:!bg-slate-900 focus:!ring-rose-500/20 focus:!border-rose-500 !py-4 transition-all text-center"
                                 isFocused
-                                placeholder="Enter Password to Confirm"
+                                placeholder="DELETE MY ACCOUNT"
                             />
 
                             <InputError
@@ -123,8 +129,8 @@ export default function DeleteUserForm({ className = '' }) {
                             </button>
                             <button 
                                 type="submit"
-                                disabled={processing}
-                                className="flex-1 py-5 rounded-[1.5rem] bg-rose-500 hover:bg-rose-600 text-white font-black text-xs uppercase tracking-widest shadow-xl shadow-rose-100 dark:shadow-none transition-all active:scale-95 disabled:opacity-50"
+                                disabled={processing || data.password !== 'DELETE MY ACCOUNT'}
+                                className="flex-1 py-5 rounded-[1.5rem] bg-rose-500 hover:bg-rose-600 text-white font-black text-xs uppercase tracking-widest shadow-xl shadow-rose-100 dark:shadow-none transition-all active:scale-95 disabled:opacity-50 disabled:grayscale"
                             >
                                 Delete Everything
                             </button>

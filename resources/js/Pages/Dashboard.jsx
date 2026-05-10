@@ -131,7 +131,7 @@ export default function Dashboard({
                 </div>
 
                 {/* 4. Strategic Foundation (Pillar 3) */}
-                <div className="pt-8 border-t-2 border-slate-50 dark:border-slate-800">
+                <div className="pt-8">
                     <div className="flex items-center space-x-4 mb-8">
                         <div className="w-12 h-[3px] bg-slate-200 dark:bg-slate-800 rounded-full"></div>
                         <span className="text-[10px] font-black uppercase tracking-[0.5em] text-slate-400 text-center">The Vision Roadmap</span>

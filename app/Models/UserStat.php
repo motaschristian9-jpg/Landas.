@@ -12,6 +12,12 @@ class UserStat extends Model
         'badges' => 'array',
     ];
 
+    protected $attributes = [
+        'xp' => 0,
+        'level' => 1,
+        'badges' => '[]',
+    ];
+
     public function user()
     {
         return $this->belongsTo(User::class);

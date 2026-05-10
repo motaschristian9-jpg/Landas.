@@ -5,6 +5,7 @@ import * as z from 'zod';
 import GuestLayout from '@/Layouts/GuestLayout';
 import { AlertCircle, Eye, EyeOff, ShieldCheck } from 'lucide-react';
 import { useState } from 'react';
+import GoogleButton from '@/Components/GoogleButton';
 
 const registerSchema = z.object({
     name: z.string().min(2, 'Full name must be at least 2 characters'),
@@ -167,6 +168,17 @@ export default function Register() {
                 >
                     {isSubmitting ? 'Creating Path...' : 'Create Account'}
                 </button>
+
+                <div className="relative py-4">
+                    <div className="absolute inset-0 flex items-center">
+                        <div className="w-full border-t border-slate-100 dark:border-slate-800"></div>
+                    </div>
+                    <div className="relative flex justify-center text-[9px] uppercase font-black tracking-[0.3em] text-slate-400">
+                        <span className="bg-white dark:bg-[#0a0a0a] px-4">or Continue with</span>
+                    </div>
+                </div>
+
+                <GoogleButton />
 
                 <div className="text-center pt-4">
                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">

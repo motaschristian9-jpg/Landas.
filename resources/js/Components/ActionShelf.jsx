@@ -23,9 +23,9 @@ export default function ActionShelf({ habits, heartsCount }) {
 
     return (
         <div className="space-y-6">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between px-2">
                 <div className="flex items-center space-x-3">
-                    <h2 className="text-2xl font-black text-slate-800 dark:text-white tracking-tighter leading-none">Daily Discipline</h2>
+                    <h2 className="text-2xl font-black text-slate-800 dark:text-white tracking-tighter">Daily Discipline</h2>
                     <div className="flex items-center space-x-1.5 bg-emerald-50 dark:bg-emerald-900/20 px-3 py-1 rounded-lg border border-emerald-100 dark:border-emerald-800/30">
                         <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                         <span className="text-[9px] font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-widest">Pulse</span>
@@ -37,7 +37,7 @@ export default function ActionShelf({ habits, heartsCount }) {
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 gap-6">
+            <div className="space-y-3">
                 {displayHabits.map((habit) => (
                     <HabitCard 
                         key={habit.id} 
@@ -48,24 +48,23 @@ export default function ActionShelf({ habits, heartsCount }) {
                 ))}
 
                 {/* Rest Day Habits */}
-                <div className="mt-4 pt-4 border-t border-slate-100 dark:border-slate-800">
-
-                    <div className="flex flex-wrap gap-2">
+                {restHabits.length > 0 && (
+                    <div className="flex flex-wrap gap-2 px-2">
                         {restHabits.map(habit => (
                             <div key={habit.id} className="bg-slate-50 dark:bg-slate-800/50 text-slate-400 dark:text-slate-500 px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest border border-slate-100 dark:border-slate-800">
                                 {habit.title}
                             </div>
                         ))}
                     </div>
-                </div>
-
-                {habits.length === 0 && (
-                    <div className="py-10 text-center border-2 border-dashed border-slate-100 dark:border-slate-800 rounded-[2rem]">
-                        <p className="text-slate-300 dark:text-slate-600 font-bold italic text-sm">No habits active.</p>
-                    </div>
                 )}
 
-
+                {displayHabits.length === 0 && (
+                    <div className="py-12 text-center border-2 border-dashed border-slate-50 dark:border-slate-800 rounded-[2.5rem]">
+                        <p className="text-slate-300 dark:text-slate-600 font-bold italic text-sm">
+                            {habits.length === 0 ? "No habits active." : "Discipline maintained. Rest well."}
+                        </p>
+                    </div>
+                )}
             </div>
         </div>
     );

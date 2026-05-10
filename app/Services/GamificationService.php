@@ -32,9 +32,12 @@ class GamificationService
     /**
      * Calculate XP required to reach the next level.
      */
-    public function getXPForNextLevel(int $currentLevel)
+    public function getXPForNextLevel(?int $currentLevel)
     {
-        return $currentLevel * 100;
+        $level = $currentLevel ?? 1;
+        if ($level < 1) $level = 1;
+        
+        return $level * 100;
     }
 
     /**

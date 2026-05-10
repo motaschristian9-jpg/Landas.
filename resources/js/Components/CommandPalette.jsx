@@ -142,7 +142,7 @@ export default function CommandPalette() {
                                     <span className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Select</span>
                                 </div>
                             </div>
-                            <span className="text-[9px] font-black text-slate-300 uppercase tracking-widest">Bantay Nexus v1.0</span>
+                            <span className="text-[9px] font-black text-slate-300 uppercase tracking-widest">Landas Nexus v1.0</span>
                         </div>
                     </motion.div>
                 </div>

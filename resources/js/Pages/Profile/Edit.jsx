@@ -4,6 +4,7 @@ import DeleteUserForm from './Partials/DeleteUserForm';
 import UpdatePasswordForm from './Partials/UpdatePasswordForm';
 import UpdateProfileInformationForm from './Partials/UpdateProfileInformationForm';
 import ThemeSwitcher from '@/Components/ThemeSwitcher';
+import UpdateSocialAccountsForm from './Partials/UpdateSocialAccountsForm';
 
 export default function Edit({ mustVerifyEmail, status }) {
     return (
@@ -21,6 +22,11 @@ export default function Edit({ mustVerifyEmail, status }) {
                 </div>
 
                 <div className="grid grid-cols-1 xl:grid-cols-12 gap-8">
+                    <div className="xl:col-span-12 bg-white/60 dark:bg-slate-900/60 backdrop-blur-md rounded-[3rem] p-8 md:p-12 border-4 border-white dark:border-slate-800 shadow-xl shadow-slate-200/40 dark:shadow-none relative overflow-hidden group">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-50/50 dark:bg-emerald-900/10 rounded-full -mr-16 -mt-16 group-hover:scale-110 transition-transform duration-700"></div>
+                        <UpdateSocialAccountsForm />
+                    </div>
+
                     <div className="xl:col-span-12 bg-white/60 dark:bg-slate-900/60 backdrop-blur-md rounded-[3rem] p-8 md:p-12 border-4 border-white dark:border-slate-800 shadow-xl shadow-slate-200/40 dark:shadow-none relative overflow-hidden group">
                         <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-50/50 dark:bg-emerald-900/10 rounded-full -mr-16 -mt-16 group-hover:scale-110 transition-transform duration-700"></div>
                         <ThemeSwitcher />

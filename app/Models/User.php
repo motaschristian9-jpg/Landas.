@@ -35,6 +35,18 @@ class User extends Authenticatable
         'password',
         'hearts_count',
         'theme',
+        'google_id',
+        'google_avatar',
+    ];
+
+    /**
+     * The model's default values for attributes.
+     *
+     * @var array
+     */
+    protected $attributes = [
+        'theme' => 'system',
+        'hearts_count' => 3,
     ];
 
     /**
@@ -46,6 +58,25 @@ class User extends Authenticatable
         'password',
         'remember_token',
     ];
+
+    /**
+     * The accessors to append to the model's array form.
+     *
+     * @var array
+     */
+    protected $appends = [
+        'has_password',
+    ];
+
+    /**
+     * Determine if the user has a password set.
+     *
+     * @return bool
+     */
+    public function getHasPasswordAttribute()
+    {
+        return ! is_null($this->password);
+    }
 
     /**
      * Get the attributes that should be cast.

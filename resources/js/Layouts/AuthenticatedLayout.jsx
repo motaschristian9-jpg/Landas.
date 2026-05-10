@@ -311,11 +311,11 @@ export default function AuthenticatedLayout({ children }) {
                             onClick={() => setUserMenu(!userMenu)}
                             className={`flex items-center w-full h-14 p-2 bg-slate-50 dark:bg-slate-900/50 rounded-2xl text-slate-700 dark:text-slate-300 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 transition-all duration-500 focus:outline-none group/user overflow-hidden ${sidebarCollapsed ? "justify-center" : "px-2"}`}
                         >
-                            <div className="w-10 h-10 rounded-xl bg-emerald-500 flex items-center justify-center text-white font-black shadow-lg shadow-emerald-100 dark:shadow-none group-hover/user:scale-105 transition-transform shrink-0">
+                            <div className="w-10 h-10 rounded-xl bg-emerald-500 flex items-center justify-center text-white font-black shadow-lg shadow-emerald-100 dark:shadow-none group-hover/user:scale-110 transition-transform shrink-0">
                                 {auth.user.name.charAt(0)}
                             </div>
                             <span
-                                className={`font-bold text-sm text-slate-600 truncate transition-all duration-500 overflow-hidden ${sidebarCollapsed ? "opacity-0 max-w-0 ml-0 pointer-events-none" : "opacity-100 max-w-xs ml-4"}`}
+                                className={`font-bold text-sm text-slate-800 dark:text-white truncate group-hover/user:text-emerald-600 dark:group-hover/user:text-emerald-400 transition-all duration-500 overflow-hidden ${sidebarCollapsed ? "opacity-0 max-w-0 ml-0 pointer-events-none" : "opacity-100 max-w-xs ml-4"}`}
                             >
                                 {auth.user.name}
                             </span>

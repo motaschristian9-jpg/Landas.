@@ -6,6 +6,7 @@ import Checkbox from '@/Components/Checkbox';
 import GuestLayout from '@/Layouts/GuestLayout';
 import { AlertCircle, Eye, EyeOff } from 'lucide-react';
 import { useState } from 'react';
+import GoogleButton from '@/Components/GoogleButton';
 
 const loginSchema = z.object({
     email: z.string().email('Please enter a valid email address'),
@@ -148,6 +149,17 @@ export default function Login({ status, canResetPassword }) {
                 >
                     {isSubmitting ? 'Verifying...' : 'Sign In'}
                 </button>
+
+                <div className="relative py-4">
+                    <div className="absolute inset-0 flex items-center">
+                        <div className="w-full border-t border-slate-100 dark:border-slate-800"></div>
+                    </div>
+                    <div className="relative flex justify-center text-[9px] uppercase font-black tracking-[0.3em] text-slate-400">
+                        <span className="bg-white dark:bg-[#0a0a0a] px-4">or Continue with</span>
+                    </div>
+                </div>
+
+                <GoogleButton />
 
                 <div className="text-center pt-4">
                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">

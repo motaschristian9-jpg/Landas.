@@ -9,9 +9,22 @@ use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
+use App\Http\Controllers\Auth\GoogleController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {
+    // Google Auth
+    Route::get('auth/google/redirect', [GoogleController::class, 'redirect'])
+        ->name('auth.google.redirect');
+    Route::get('auth/google/callback', [GoogleController::class, 'callback'])
+        ->name('auth.google.callback');
+    Route::get('auth/google/verify', [GoogleController::class, 'showVerify'])
+        ->name('auth.google.verify');
+    Route::post('auth/google/verify', [GoogleController::class, 'verify']);
+    Route::get('auth/google/complete', [GoogleController::class, 'showComplete'])
+        ->name('auth.google.complete');
+    Route::post('auth/google/complete', [GoogleController::class, 'complete']);
+
     Route::get('register', [RegisteredUserController::class, 'create'])
         ->name('register');
 
@@ -56,4 +69,7 @@ Route::middleware('auth')->group(function () {
 
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
         ->name('logout');
+
+    Route::get('auth/google/link', [GoogleController::class, 'link'])
+        ->name('auth.google.link');
 });
