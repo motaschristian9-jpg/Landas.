@@ -20,6 +20,7 @@ import {
     Play,
 } from "lucide-react";
 import ConfirmationModal from "@/Components/ConfirmationModal";
+import InputError from "@/Components/InputError";
 import { useFocusTimer } from "@/Contexts/FocusTimerContext";
 
 export default function Index({ todos, showingHistory }) {
@@ -31,12 +32,23 @@ export default function Index({ todos, showingHistory }) {
     const [expandedDates, setExpandedDates] = useState({});
     const { startTimer, activeTask } = useFocusTimer();
 
-    const { data, setData, post, processing, reset } = useForm({
+    const { data, setData, post, processing, reset, errors, setError, clearErrors } = useForm({
         title: "",
         priority: "medium",
         time_slot: "morning",
         estimated_minutes: 30,
     });
+
+    const handleMinutesChange = (e) => {
+        const value = e.target.value;
+        setData("estimated_minutes", value);
+        
+        if (value < 1) {
+            setError("estimated_minutes", "Minutes must be at least 1");
+        } else {
+            clearErrors("estimated_minutes");
+        }
+    };
 
     const toggleHistory = () => {
         router.get(
@@ -963,14 +975,10 @@ export default function Index({ todos, showingHistory }) {
                                 <input
                                     type="number"
                                     value={data.estimated_minutes}
-                                    onChange={(e) =>
-                                        setData(
-                                            "estimated_minutes",
-                                            e.target.value,
-                                        )
-                                    }
+                                    onChange={handleMinutesChange}
                                     className="w-full px-6 py-4 rounded-2xl border-2 border-slate-100 dark:border-slate-800 bg-transparent dark:text-white font-bold outline-none focus:border-emerald-500 transition-all"
                                 />
+                                <InputError message={errors.estimated_minutes} className="mt-2" />
                             </div>
 
                             <button

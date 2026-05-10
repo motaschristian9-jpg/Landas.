@@ -427,7 +427,7 @@ export default function Index({ goals, categories, priorities, total_completed }
                                             type="date" 
                                             value={showEditGoalModal ? editForm.data.target_date : data.target_date}
                                             onChange={e => showEditGoalModal ? editForm.setData('target_date', e.target.value) : setData('target_date', e.target.value)}
-                                            className="w-full px-6 py-4 rounded-2xl border-2 border-slate-100 dark:border-slate-800 bg-transparent dark:text-white font-bold text-xs focus:border-emerald-500 outline-none transition-all"
+                                            className="w-full px-6 py-4 rounded-2xl border-2 border-slate-100 dark:border-slate-800 bg-transparent dark:text-white font-bold text-xs focus:border-emerald-500 outline-none transition-all dark:[color-scheme:dark]"
                                         />
                                     </div>
                                 </div>
