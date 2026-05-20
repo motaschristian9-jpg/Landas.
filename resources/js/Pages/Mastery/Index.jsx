@@ -115,7 +115,6 @@ export default function Index({ goals, categories, priorities, total_completed }
                 preserveScroll: true,
                 onSuccess: () => {
                     setGoalToDelete(null);
-                    setSelectedGoal(goals.data[0] || null);
                 }
             });
         }
