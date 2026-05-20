@@ -118,14 +118,14 @@ export default function GuestLayout({ children }) {
             </motion.div>
 
             {/* Right Side: Auth Forms (40%) */}
-            <div className="flex-1 md:w-[40%] flex flex-col bg-white dark:bg-slate-950 p-6 md:p-10 relative overflow-hidden transition-colors duration-500">
+            <div className="flex-1 md:w-[40%] flex flex-col bg-white dark:bg-slate-950 p-6 md:p-10 relative overflow-y-auto overflow-x-hidden md:overflow-hidden transition-colors duration-500">
                 <div className="md:hidden flex justify-center mb-6">
                     <div className="w-12 h-12 bg-emerald-500 rounded-xl flex items-center justify-center shadow-lg shadow-emerald-500/20">
                         <div className="w-6 h-6 bg-white rounded-md"></div>
                     </div>
                 </div>
 
-                <div className="flex-1 flex flex-col justify-center max-w-sm mx-auto w-full relative" style={{ perspective: '1200px' }}>
+                <div className="flex-1 flex flex-col justify-start md:justify-center max-w-sm mx-auto w-full relative py-4 md:py-0" style={{ perspective: '1200px' }}>
                     <AnimatePresence mode="popLayout" custom={direction} initial={false}>
                         <motion.div 
                             key={url}
