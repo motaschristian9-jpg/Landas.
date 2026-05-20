@@ -69,12 +69,12 @@ export default function Login({ status, canResetPassword }) {
                 </div>
             )}
 
-            <div className="mb-6 text-center">
+            <div className="mb-4 text-center">
                 <h2 className="text-4xl font-extrabold text-slate-800 dark:text-white tracking-tighter mb-2 transition-colors duration-500">Welcome Back<span className="text-emerald-500">.</span></h2>
                 <p className="text-slate-400 dark:text-slate-500 font-bold text-[10px] uppercase tracking-[0.3em]">Sign in to continue your path</p>
             </div>
 
-            <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-4">
+            <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-3">
                 <div>
                     <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500 mb-2 ml-1">Email Address</label>
                     <div className="relative group">
@@ -85,7 +85,7 @@ export default function Login({ status, canResetPassword }) {
                             {...register('email')}
                             type="email"
                             placeholder="your@email.com"
-                            className={`w-full pl-12 pr-5 py-4 rounded-[1.5rem] border-2 bg-slate-50/50 dark:bg-slate-900/50 focus:bg-white dark:focus:bg-slate-900 outline-none transition-all font-bold text-slate-700 dark:text-white text-sm shadow-sm ${
+                            className={`w-full pl-12 pr-5 py-3 rounded-[1.5rem] border-2 bg-slate-50/50 dark:bg-slate-900/50 focus:bg-white dark:focus:bg-slate-900 outline-none transition-all font-bold text-slate-700 dark:text-white text-sm shadow-sm ${
                                 errors.email ? 'border-red-100 dark:border-red-900/30 focus:border-red-200 focus:ring-red-500/5' : 'border-slate-50 dark:border-slate-800 focus:border-emerald-500/20 focus:ring-emerald-500/5'
                             }`}
                         />
@@ -103,7 +103,7 @@ export default function Login({ status, canResetPassword }) {
                             {...register('password')}
                             type={showPassword ? 'text' : 'password'}
                             placeholder="••••••••"
-                            className={`w-full pl-12 pr-12 py-4 rounded-[1.5rem] border-2 bg-slate-50/50 dark:bg-slate-900/50 focus:bg-white dark:focus:bg-slate-900 outline-none transition-all font-bold text-slate-700 dark:text-white text-sm shadow-sm ${
+                            className={`w-full pl-12 pr-12 py-3 rounded-[1.5rem] border-2 bg-slate-50/50 dark:bg-slate-900/50 focus:bg-white dark:focus:bg-slate-900 outline-none transition-all font-bold text-slate-700 dark:text-white text-sm shadow-sm ${
                                 errors.password ? 'border-red-100 dark:border-red-900/30 focus:border-red-200 focus:ring-red-500/5' : 'border-slate-50 dark:border-slate-800 focus:border-emerald-500/20 focus:ring-emerald-500/5'
                             }`}
                         />
@@ -145,12 +145,12 @@ export default function Login({ status, canResetPassword }) {
                 <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full py-5 bg-emerald-500 hover:bg-emerald-600 text-white font-black text-xs uppercase tracking-[0.2em] rounded-[1.5rem] shadow-xl shadow-emerald-200/50 dark:shadow-none transition-all transform active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full py-4 bg-emerald-500 hover:bg-emerald-600 text-white font-black text-xs uppercase tracking-[0.2em] rounded-[1.5rem] shadow-xl shadow-emerald-200/50 dark:shadow-none transition-all transform active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                     {isSubmitting ? 'Verifying...' : 'Sign In'}
                 </button>
 
-                <div className="relative py-4">
+                <div className="relative py-3">
                     <div className="absolute inset-0 flex items-center">
                         <div className="w-full border-t border-slate-100 dark:border-slate-800"></div>
                     </div>
@@ -161,7 +161,7 @@ export default function Login({ status, canResetPassword }) {
 
                 <GoogleButton />
 
-                <div className="text-center pt-4">
+                <div className="text-center pt-2">
                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
                         New to Landas?{' '}
                         <Link

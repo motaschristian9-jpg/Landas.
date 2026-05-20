@@ -60,20 +60,20 @@ export default function ForgotPassword({ status }) {
                 </div>
             )}
 
-            <div className="mb-4 text-center">
+            <div className="mb-3 text-center">
                 <h2 className="text-3xl font-extrabold text-slate-800 dark:text-white tracking-tighter mb-1">Reset Path<span className="text-emerald-500">.</span></h2>
                 <p className="text-slate-400 dark:text-slate-500 font-bold text-[10px] uppercase tracking-[0.3em]">We'll help you find your way back</p>
             </div>
 
-            <div className="mb-6 px-1 text-center">
+            <div className="mb-4 px-1 text-center">
                 <p className="text-[11px] font-medium text-slate-500 dark:text-slate-400 leading-relaxed">
                     Forgot your password? No problem. Just let us know your email address and we will email you a password reset link.
                 </p>
             </div>
 
-            <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-4">
+            <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-3">
                 <div>
-                    <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500 mb-2 ml-1">Email Address</label>
+                    <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500 mb-1 ml-1">Email Address</label>
                     <div className="relative group">
                         <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-300 dark:text-slate-600 group-focus-within:text-emerald-500 transition-colors">
                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5"><path d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.206"/></svg>
@@ -93,7 +93,7 @@ export default function ForgotPassword({ status }) {
                 <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full py-4 bg-emerald-500 hover:bg-emerald-600 text-white font-black text-xs uppercase tracking-[0.2em] rounded-[1.5rem] shadow-xl shadow-emerald-200/50 dark:shadow-none transition-all transform active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full py-3.5 bg-emerald-500 hover:bg-emerald-600 text-white font-black text-xs uppercase tracking-[0.2em] rounded-[1.5rem] shadow-xl shadow-emerald-200/50 dark:shadow-none transition-all transform active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                     {isSubmitting ? 'Sending Link...' : 'Email Reset Link'}
                 </button>
