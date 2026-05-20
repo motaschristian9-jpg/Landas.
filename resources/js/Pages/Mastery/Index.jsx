@@ -94,6 +94,17 @@ export default function Index({ goals, categories, priorities, total_completed }
         });
     };
 
+    const deleteMilestone = (milestoneId) => {
+        router.delete(route('goals.milestones.destroy', [selectedGoal.id, milestoneId]), {
+            preserveScroll: true
+        });
+    };
+
+    const handleDeleteMilestone = (e, milestoneId) => {
+        e.stopPropagation();
+        deleteMilestone(milestoneId);
+    };
+
     const deleteGoal = (goal) => {
         setGoalToDelete(goal);
     };
@@ -303,9 +314,8 @@ export default function Index({ goals, categories, priorities, total_completed }
                                             </div>
                                         </div>
 
-                                        {/* Milestones Timeline */}
-                                        <div className="relative pl-12 space-y-6">
-                                            <div className="absolute left-6 top-0 bottom-0 w-1 bg-slate-100 dark:bg-slate-800 rounded-full"></div>
+                                        {/* Milestones List */}
+                                        <div className="relative space-y-6">
                                             
                                             <div className="mb-8 pt-2">
                                                 <div className="flex items-center space-x-3">
@@ -328,7 +338,6 @@ export default function Index({ goals, categories, priorities, total_completed }
                                                         }`}
                                                         onClick={() => toggleMilestone(ms.id)}
                                                     >
-                                                        <div className="absolute -left-[42px] w-6 h-6 rounded-full bg-white dark:bg-slate-900 border-4 border-slate-100 dark:border-slate-800 z-10 group-hover:border-emerald-500 transition-colors"></div>
                                                         
                                                         <div className="flex items-center space-x-6">
                                                             <div className={ms.is_completed ? 'text-emerald-500' : 'text-slate-200 dark:text-slate-700'}>
@@ -338,16 +347,19 @@ export default function Index({ goals, categories, priorities, total_completed }
                                                                 {ms.title}
                                                             </span>
                                                         </div>
-                                                        <div className="w-10 h-10 rounded-xl bg-slate-50 dark:bg-slate-800 text-slate-300 dark:text-slate-600 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all">
-                                                            <Check size={18} strokeWidth={3} />
-                                                        </div>
+                                                        <button 
+                                                            onClick={(e) => handleDeleteMilestone(e, ms.id)}
+                                                            className="w-10 h-10 rounded-xl bg-slate-50 dark:bg-slate-800 text-slate-400 hover:text-rose-500 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all border border-slate-100 dark:border-slate-700 active:scale-90 shrink-0"
+                                                            title="Delete Milestone"
+                                                        >
+                                                            <Trash2 size={16} />
+                                                        </button>
                                                     </motion.div>
                                                 ))}
                                             </AnimatePresence>
 
                                             {/* Add Milestone Node */}
                                             <div className="relative pt-4">
-                                                <div className="absolute -left-[40px] top-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-emerald-500 shadow-lg shadow-emerald-200 dark:shadow-none z-10"></div>
                                                 <form onSubmit={addMilestone} className="relative group">
                                                     <input 
                                                         type="text" 

@@ -122,6 +122,10 @@ class GoalController extends Controller
             abort(403);
         }
 
+        if ($milestone->goal_id !== $goal->id) {
+            abort(404);
+        }
+
         $wasCompleted = $milestone->is_completed;
         $milestone->update(['is_completed' => !$milestone->is_completed]);
 
@@ -136,6 +140,10 @@ class GoalController extends Controller
     {
         if ($goal->user_id !== auth()->id()) {
             abort(403);
+        }
+
+        if ($milestone->goal_id !== $goal->id) {
+            abort(404);
         }
 
         $milestone->delete();

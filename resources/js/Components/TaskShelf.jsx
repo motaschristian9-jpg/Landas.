@@ -165,10 +165,10 @@ export default function TaskShelf({ todos, nextUrl, onLoadMore }) {
                                             e.stopPropagation();
                                             startTimer(todo);
                                         }}
-                                        className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all transform hover:scale-110 ${
+                                        className={`w-10 h-10 rounded-xl flex items-center justify-center border opacity-0 group-hover:opacity-100 transition-all shrink-0 ${
                                             activeTask
-                                                ? "bg-slate-100 dark:bg-slate-800 text-slate-300 dark:text-slate-600 cursor-not-allowed opacity-50"
-                                                : "bg-emerald-50 dark:bg-emerald-900/20 text-emerald-500 opacity-0 group-hover:opacity-100 hover:bg-emerald-500 hover:text-white"
+                                                ? "bg-slate-50 dark:bg-slate-800 border-slate-100 dark:border-slate-700 text-slate-300 dark:text-slate-600 cursor-not-allowed"
+                                                : "bg-slate-50 dark:bg-slate-800 border-slate-100 dark:border-slate-700 text-slate-400 hover:text-emerald-500 active:scale-90"
                                         }`}
                                         title={
                                             activeTask
@@ -176,17 +176,14 @@ export default function TaskShelf({ todos, nextUrl, onLoadMore }) {
                                                 : "Focus Mode"
                                         }
                                     >
-                                        <Play
-                                            size={16}
-                                            className="fill-current"
-                                        />
+                                        <Play size={16} className="fill-current" />
                                     </button>
                                     <button
                                         onClick={(e) => {
                                             e.stopPropagation();
                                             handleDelete(todo);
                                         }}
-                                        className="w-10 h-10 rounded-xl bg-rose-50 dark:bg-rose-900/20 text-rose-500 flex items-center justify-center opacity-0 group-hover:opacity-100 hover:bg-rose-500 hover:text-white transition-all transform hover:scale-110"
+                                        className="w-10 h-10 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 text-slate-400 hover:text-rose-500 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all active:scale-90 shrink-0"
                                     >
                                         <Trash2 size={16} />
                                     </button>

@@ -710,10 +710,10 @@ export default function Index({ todos, showingHistory, filters = {} }) {
                                     )
                                         return null;
 
-                                    return (
+                                     return (
                                         <div
                                             key={slot.id}
-                                            className="relative pl-12"
+                                            className="relative pl-16"
                                         >
                                             {/* Timeline line */}
                                             <div className="absolute left-6 top-0 bottom-0 w-1 bg-slate-50 dark:bg-slate-800 rounded-full"></div>
@@ -724,7 +724,7 @@ export default function Index({ todos, showingHistory, filters = {} }) {
                                                 </div>
                                             </div>
 
-                                            <div className="mb-6 pt-2">
+                                            <div className="flex items-center min-h-[48px] mb-6">
                                                 <h4 className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-[0.2em]">
                                                     {slot.label}
                                                 </h4>
@@ -843,10 +843,10 @@ export default function Index({ todos, showingHistory, filters = {} }) {
                                                                                 todo,
                                                                             );
                                                                         }}
-                                                                        className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${
+                                                                        className={`w-10 h-10 rounded-xl flex items-center justify-center border opacity-0 group-hover:opacity-100 transition-all shrink-0 ${
                                                                             activeTask
-                                                                                ? "bg-slate-100 dark:bg-slate-800 text-slate-300 dark:text-slate-600 cursor-not-allowed"
-                                                                                : "opacity-0 group-hover:opacity-100 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-500 hover:bg-emerald-500 hover:text-white"
+                                                                                ? "bg-slate-50 dark:bg-slate-800 border-slate-100 dark:border-slate-700 text-slate-300 dark:text-slate-600 cursor-not-allowed"
+                                                                                : "bg-slate-50 dark:bg-slate-800 border-slate-100 dark:border-slate-700 text-slate-400 hover:text-emerald-500 active:scale-90"
                                                                         }`}
                                                                         title={
                                                                             activeTask
@@ -855,9 +855,7 @@ export default function Index({ todos, showingHistory, filters = {} }) {
                                                                         }
                                                                     >
                                                                         <Play
-                                                                            size={
-                                                                                18
-                                                                            }
+                                                                            size={18}
                                                                             className="fill-current"
                                                                         />
                                                                     </button>
@@ -870,13 +868,9 @@ export default function Index({ todos, showingHistory, filters = {} }) {
                                                                                 todo,
                                                                             );
                                                                         }}
-                                                                        className="opacity-0 group-hover:opacity-100 w-10 h-10 rounded-xl bg-rose-50 dark:bg-rose-900/20 text-rose-500 flex items-center justify-center transition-all hover:bg-rose-500 hover:text-white"
+                                                                        className="w-10 h-10 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 text-slate-400 hover:text-rose-500 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all active:scale-90 shrink-0"
                                                                     >
-                                                                        <Trash2
-                                                                            size={
-                                                                                18
-                                                                            }
-                                                                        />
+                                                                        <Trash2 size={18} />
                                                                     </button>
                                                                 </div>
                                                             )}
@@ -890,11 +884,9 @@ export default function Index({ todos, showingHistory, filters = {} }) {
                                                                             todo,
                                                                         );
                                                                     }}
-                                                                    className="opacity-0 group-hover:opacity-100 w-10 h-10 rounded-xl bg-rose-50 dark:bg-rose-900/20 text-rose-500 flex items-center justify-center transition-all hover:bg-rose-500 hover:text-white"
+                                                                    className="w-10 h-10 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 text-slate-400 hover:text-rose-500 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all active:scale-90 shrink-0"
                                                                 >
-                                                                    <Trash2
-                                                                        size={18}
-                                                                    />
+                                                                    <Trash2 size={18} />
                                                                 </button>
                                                             )}
                                                         </motion.div>

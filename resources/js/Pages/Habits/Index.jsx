@@ -177,15 +177,15 @@ export default function Index({ habits, heartsCount }) {
                                     <div className="flex space-x-2">
                                         <button 
                                             onClick={() => openEdit(habit)}
-                                            className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800 text-slate-400 dark:text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors"
+                                            className="w-12 h-12 rounded-2xl bg-slate-50 dark:bg-slate-800 text-slate-400 hover:text-emerald-500 flex items-center justify-center transition-all border border-slate-100 dark:border-slate-700 active:scale-90"
                                         >
-                                            <Settings2 size={18} />
+                                            <Settings2 size={20} />
                                         </button>
                                         <button 
                                             onClick={() => deleteHabit(habit)}
-                                            className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800 text-slate-400 dark:text-slate-500 hover:text-rose-500 transition-colors"
+                                            className="w-12 h-12 rounded-2xl bg-slate-50 dark:bg-slate-800 text-slate-400 hover:text-rose-500 flex items-center justify-center transition-all border border-slate-100 dark:border-slate-700 active:scale-90"
                                         >
-                                            <Trash2 size={18} />
+                                            <Trash2 size={20} />
                                         </button>
                                     </div>
                                 </div>
