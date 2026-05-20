@@ -18,12 +18,14 @@ import {
     Target,
     Timer,
     Play,
+    Search,
+    X,
 } from "lucide-react";
 import ConfirmationModal from "@/Components/ConfirmationModal";
 import InputError from "@/Components/InputError";
 import { useFocusTimer } from "@/Contexts/FocusTimerContext";
 
-export default function Index({ todos, showingHistory }) {
+export default function Index({ todos, showingHistory, filters = {} }) {
     const [localTodos, setLocalTodos] = useState(todos?.data || []);
     const [showModal, setShowModal] = useState(false);
     const [filter, setFilter] = useState("all"); // all, active, completed
@@ -31,6 +33,32 @@ export default function Index({ todos, showingHistory }) {
     const [dateToDelete, setDateToDelete] = useState(null);
     const [expandedDates, setExpandedDates] = useState({});
     const { startTimer, activeTask } = useFocusTimer();
+
+    const [searchQuery, setSearchQuery] = useState(filters?.search || "");
+    const [isSearching, setIsSearching] = useState(false);
+
+    useEffect(() => {
+        const timeoutId = setTimeout(() => {
+            if ((filters?.search || "") !== searchQuery) {
+                setIsSearching(true);
+                router.get(
+                    route("todos.index"),
+                    {
+                        search: searchQuery || undefined,
+                        history: showingHistory ? true : undefined,
+                    },
+                    {
+                        preserveState: true,
+                        replace: true,
+                        only: ["todos", "filters"],
+                        onFinish: () => setIsSearching(false),
+                    }
+                );
+            }
+        }, 300);
+
+        return () => clearTimeout(timeoutId);
+    }, [searchQuery]);
 
     const { data, setData, post, processing, reset, errors, setError, clearErrors } = useForm({
         title: "",
@@ -55,6 +83,7 @@ export default function Index({ todos, showingHistory }) {
             route("todos.index"),
             {
                 history: showingHistory ? undefined : true,
+                search: searchQuery || undefined,
             },
             { preserveScroll: true },
         );
@@ -251,6 +280,30 @@ export default function Index({ todos, showingHistory }) {
                     </div>
                 </div>
 
+                {/* Search Bar Section */}
+                <div className="mb-10 max-w-2xl animate-in fade-in slide-in-from-top-4 duration-500">
+                    <div className="relative group">
+                        <span className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none text-slate-400 dark:text-slate-500">
+                            <Search size={20} className={`${isSearching ? "animate-spin text-emerald-500" : "group-focus-within:text-emerald-500 transition-colors"}`} />
+                        </span>
+                        <input
+                            type="text"
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            placeholder={showingHistory ? "Search your lifetime history..." : "Search today's sprint tasks..."}
+                            className="w-full pl-14 pr-12 py-5 rounded-[2rem] border-2 border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900/50 dark:text-white font-bold text-lg focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 outline-none transition-all shadow-sm group-hover:border-slate-200 dark:group-hover:border-slate-700/50"
+                        />
+                        {searchQuery && (
+                            <button
+                                onClick={() => setSearchQuery("")}
+                                className="absolute inset-y-0 right-0 pr-5 flex items-center text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 active:scale-90 transition-all"
+                            >
+                                <X size={20} />
+                            </button>
+                        )}
+                    </div>
+                </div>
+
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
                     {/* Left Side: Stats & Focus - Hidden in History */}
                     {!showingHistory && (
@@ -419,7 +472,25 @@ export default function Index({ todos, showingHistory }) {
 
                         {/* Grouped Tasks / History Table */}
                         <div className="space-y-12">
-                            {showingHistory ? (
+                            {localTodos.length === 0 && searchQuery ? (
+                                <div className="flex flex-col items-center justify-center py-20 text-center bg-white dark:bg-slate-900/40 rounded-[3rem] border-2 border-dashed border-slate-100 dark:border-slate-800 p-8 animate-in fade-in zoom-in-95 duration-500">
+                                    <div className="w-20 h-20 rounded-[2rem] bg-slate-50 dark:bg-slate-800 text-slate-400 dark:text-slate-500 flex items-center justify-center mb-6">
+                                        <Search size={32} />
+                                    </div>
+                                    <h3 className="text-2xl font-black text-slate-800 dark:text-white tracking-tight mb-2">
+                                        No actions found
+                                    </h3>
+                                    <p className="text-slate-400 dark:text-slate-500 font-bold max-w-sm mb-8 text-sm">
+                                        We couldn't find any tasks matching "{searchQuery}". Try typing something else or clear the search.
+                                    </p>
+                                    <button
+                                        onClick={() => setSearchQuery("")}
+                                        className="px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl font-black text-xs uppercase tracking-widest transition-all shadow-lg shadow-emerald-100 dark:shadow-none active:scale-95"
+                                    >
+                                        Clear Search
+                                    </button>
+                                </div>
+                            ) : showingHistory ? (
                                 <div className="space-y-4">
                                     <div className="overflow-hidden bg-white/40 dark:bg-slate-900/40 backdrop-blur-xl rounded-[2.5rem] border-2 border-slate-100 dark:border-slate-800 shadow-sm">
                                         <table className="w-full text-left border-collapse">

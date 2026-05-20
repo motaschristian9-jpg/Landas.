@@ -15,6 +15,13 @@ class TodoController extends Controller
         
         $query = Auth::user()->todos();
 
+        if ($request->filled('search')) {
+            $search = $request->query('search');
+            $query->where(function($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%");
+            });
+        }
+
         if (!$showHistory) {
             // Fresh Start: Only show incomplete or completed today
             $query->where(function($q) {
@@ -37,7 +44,10 @@ class TodoController extends Controller
         return \Inertia\Inertia::render('Todos/Index', [
             'todos' => $todos,
             'goals' => $goals,
-            'showingHistory' => $showHistory
+            'showingHistory' => $showHistory,
+            'filters' => [
+                'search' => $request->query('search')
+            ]
         ]);
     }
 

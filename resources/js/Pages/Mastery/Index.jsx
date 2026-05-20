@@ -7,11 +7,13 @@ import {
     ChevronRight, Compass, TrendingUp, Check, 
     Sparkles, Zap, Timer, Trophy, Flag, Layers
 } from 'lucide-react';
+import ConfirmationModal from '@/Components/ConfirmationModal';
 
 export default function Index({ goals, categories, priorities, total_completed }) {
     const [selectedGoal, setSelectedGoal] = useState(null);
     const [showGoalModal, setShowGoalModal] = useState(false);
     const [showEditGoalModal, setShowEditGoalModal] = useState(false);
+    const [goalToDelete, setGoalToDelete] = useState(null);
 
     useEffect(() => {
         if (goals.data.length > 0) {
@@ -93,9 +95,17 @@ export default function Index({ goals, categories, priorities, total_completed }
     };
 
     const deleteGoal = (goal) => {
-        if (confirm(`Are you sure you want to delete the vision '${goal.title}'?`)) {
-            router.delete(route('goals.destroy', goal.id), {
-                onSuccess: () => setSelectedGoal(goals.data[0] || null),
+        setGoalToDelete(goal);
+    };
+
+    const confirmDelete = () => {
+        if (goalToDelete) {
+            router.delete(route('goals.destroy', goalToDelete.id), {
+                preserveScroll: true,
+                onSuccess: () => {
+                    setGoalToDelete(null);
+                    setSelectedGoal(goals.data[0] || null);
+                }
             });
         }
     };
@@ -471,6 +481,16 @@ export default function Index({ goals, categories, priorities, total_completed }
                     </div>
                 )}
             </AnimatePresence>
+
+            {/* Deletion Confirmation */}
+            <ConfirmationModal 
+                show={!!goalToDelete}
+                onClose={() => setGoalToDelete(null)}
+                onConfirm={confirmDelete}
+                title="Shatter Vision?"
+                message={goalToDelete ? `Are you sure you want to remove "${goalToDelete.title}"? Your milestones and progress will be lost.` : ''}
+                confirmText="Break Vision"
+            />
         </AuthenticatedLayout>
     );
 }
