@@ -321,16 +321,16 @@ export default function Index({ habits, heartsCount }) {
 
                     {localHabits.length === 0 && (
                         <div className="lg:col-span-2 py-32 flex flex-col items-center justify-center border-4 border-dashed border-slate-50 dark:border-slate-800 rounded-[4rem]">
-                            <div className="w-24 h-24 rounded-[2rem] bg-slate-50 dark:bg-slate-900 flex items-center justify-center text-slate-200 dark:text-slate-800 mb-8">
-                                <Activity size={48} />
+                            <div className="w-24 h-24 bg-white dark:bg-slate-900 rounded-[2.5rem] shadow-xl shadow-slate-200/50 dark:shadow-none flex items-center justify-center text-emerald-500 mb-8">
+                                <Activity size={48} strokeWidth={2} />
                             </div>
                             <h3 className="text-2xl font-black text-slate-900 dark:text-white tracking-tighter mb-2">No Discipline Defined.</h3>
-                            <p className="text-slate-400 font-bold max-w-sm text-center">Your future is created by what you do today, not tomorrow.</p>
+                            <p className="text-slate-400 dark:text-slate-500 font-bold text-sm max-w-sm text-center mb-10 leading-relaxed">Your future is created by what you do today, not tomorrow.</p>
                             <button 
                                 onClick={() => setShowModal(true)}
-                                className="mt-8 bg-slate-900 dark:bg-emerald-500 text-white px-10 py-4 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-emerald-500 dark:hover:bg-emerald-600 transition-all shadow-xl shadow-slate-200 dark:shadow-none"
+                                className="bg-slate-900 dark:bg-emerald-500 text-white px-10 py-5 rounded-[2rem] font-black text-xs uppercase tracking-[0.2em] transition-all shadow-xl shadow-slate-200 dark:shadow-none hover:shadow-emerald-200 dark:hover:shadow-none active:scale-95"
                             >
-                                Forge First Habit
+                                Begin Ritual
                             </button>
                         </div>
                     )}

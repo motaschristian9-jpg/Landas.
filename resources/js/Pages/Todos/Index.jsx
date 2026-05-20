@@ -284,7 +284,7 @@ export default function Index({ todos, showingHistory, filters = {} }) {
                 <div className="mb-10 max-w-2xl animate-in fade-in slide-in-from-top-4 duration-500">
                     <div className="relative group">
                         <span className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none text-slate-400 dark:text-slate-500">
-                            <Search size={20} className={`${isSearching ? "animate-spin text-emerald-500" : "group-focus-within:text-emerald-500 transition-colors"}`} />
+                            <Search size={20} className={`${isSearching ? "text-emerald-500" : "group-focus-within:text-emerald-500 transition-colors"}`} />
                         </span>
                         <input
                             type="text"
